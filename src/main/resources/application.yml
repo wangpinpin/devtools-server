@@ -16,3 +16,7 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+BAIDU:
+  APP_ID: 21790219
+  API_KEY: 8wd7XofmQLsHI58puWPbppnN
+  SECRET_KEY: hyMQsPHET75iRGXxtzyYC8TqbsNzTX87"YC8TqbsNzTX87

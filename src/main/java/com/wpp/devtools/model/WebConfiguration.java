@@ -27,16 +27,11 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
-                .addPathPatterns("/**")
+                .addPathPatterns("/auth/**")
                 .excludePathPatterns("/favicon.ico")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**",
                         "/swagger-ui.html/**")
-                .excludePathPatterns(Arrays.asList("/", "/user/login", "/user/registerUser",
-                        "/user/registerDealerAndUser",
-                        "/user/forgetPassword", "/user/resetPassword",
-                        "/basics/getRoleList", "/basics/getPositionList",
-                        "/area/findBigArea", "/area/findSmallArea",
-                        "/basics/checkVersion"))
+                .excludePathPatterns(Arrays.asList("/unAuth/**"))
         ;
     }
 
