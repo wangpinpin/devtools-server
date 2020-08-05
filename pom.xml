@@ -11,8 +11,8 @@
   </parent>
   <name>devtools-server</name>
   <packaging>jar</packaging>
-  <groupId>com.volvo.dss</groupId>
-  <artifactId>volvo-sever</artifactId>
+  <groupId>com.wpp</groupId>
+  <artifactId>devtools-sever</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <description>Demo project for Spring Boot</description>
 
@@ -142,6 +142,7 @@
 
 
   <build>
+    <finalName>devtools-server</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
