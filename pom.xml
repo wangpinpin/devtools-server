@@ -9,10 +9,10 @@
     <version>2.3.1.RELEASE</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
+  <name>devtools</name>
   <groupId>com.volvo.dss</groupId>
   <artifactId>volvo-sever</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>volvo-sever</name>
   <description>Demo project for Spring Boot</description>
 
   <properties>
@@ -145,6 +145,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>2.2.2.RELEASE</version>
       </plugin>
     </plugins>
   </build>
