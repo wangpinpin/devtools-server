@@ -5,7 +5,7 @@ spring:
     password: wojiuswo200
     driver-class-name: com.mysql.cj.jdbc.Driver
 server:
-  port: 80
+  port: 8001
 log:
   level: info
   path: ./logs
