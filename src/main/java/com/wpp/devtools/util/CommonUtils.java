@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.CaseFormat;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,6 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 /**
  * @program: volvo-server
@@ -197,6 +200,22 @@ public class CommonUtils {
             throw new CustomException(ExceptionCodeEnums.TIME_ERROR);
         }
         return new Timestamp(time.getTime());
+    }
+
+
+    /**
+     * 图片转base64
+     *
+     * @param file
+     * @return
+     */
+    public static String toBaseImg64(MultipartFile file) {
+        BASE64Encoder encode = new BASE64Encoder();
+        try {
+            return encode.encode(file.getBytes()).replaceAll("[\\s*\t\n\r]", "");
+        } catch (IOException e) {
+            throw new CustomException(ExceptionCodeEnums.ERROR, e.getMessage());
+        }
     }
 
 }

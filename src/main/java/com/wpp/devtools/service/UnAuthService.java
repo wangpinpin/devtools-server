@@ -1,17 +1,94 @@
 package com.wpp.devtools.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.wpp.devtools.config.BaiduConfig;
+import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.config.UrlConfig;
+import com.wpp.devtools.enums.ExceptionCodeEnums;
+import com.wpp.devtools.exception.CustomException;
+import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
+import com.wpp.devtools.util.RedistUtil;
+import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UnAuthService {
 
+    @Autowired
+    private BaiduConfig baiduConfig;
+
+    @Autowired
+    private RedistUtil redistUtil;
+
     /**
      * 舔狗日记
+     *
      * @return
      */
     public Object getDoglickingDiary() {
-       return HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null);
+        return HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null);
+    }
+
+
+    /**
+     * 图片转文字
+     *
+     * @return
+     */
+    public Object imgToText(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new CustomException(ExceptionCodeEnums.PARAM_NULL);
+        }
+
+        String accessToken = getBaiduAccessToken();
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+
+        String imgStr = CommonUtils.toBaseImg64(file);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("image", imgStr);
+        
+        String result = HttpUtil
+                .post(MessageFormat.format(UrlConfig.BAIDU_IMG_TO_TEXT_URL, accessToken), params,
+                        headers);
+        return JSONObject.parseObject(result);
+
+    }
+
+
+    /**
+     * 获取百度AccessToken
+     *
+     * @return
+     */
+    private String getBaiduAccessToken() {
+        String accessToken = redistUtil.getString(RedisKeyConfig.BAIDU_ACCESS_TOKEN_KEY);
+
+        if (StringUtils.isEmpty(accessToken)) {
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "client_credentials");
+            params.add("client_id", baiduConfig.getApiKey());
+            params.add("client_secret", baiduConfig.getSecretKey());
+            try {
+                String result = HttpUtil.post(UrlConfig.BAIDU_ACCESS_TOKEN_URL, params);
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                accessToken = jsonObject.getString("access_token");
+                //设置20天过期, 百度accessToken过期时间在一个月左右
+                redistUtil.setString(RedisKeyConfig.BAIDU_ACCESS_TOKEN_KEY, accessToken, 1728000L);
+            } catch (Exception e) {
+                throw new CustomException(ExceptionCodeEnums.ERROR, e.getMessage());
+            }
+        }
+
+        return accessToken;
     }
 }

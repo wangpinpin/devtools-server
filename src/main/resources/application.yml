@@ -8,7 +8,7 @@ spring:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   application:
-    name: dss-server
+    name: devtools-server
   servlet:
     multipart:
       max-file-size: 10MB
@@ -19,4 +19,4 @@ spring:
 BAIDU:
   APP_ID: 21790219
   API_KEY: 8wd7XofmQLsHI58puWPbppnN
-  SECRET_KEY: hyMQsPHET75iRGXxtzyYC8TqbsNzTX87"YC8TqbsNzTX87
+  SECRET_KEY: hyMQsPHET75iRGXxtzyYC8TqbsNzTX87
