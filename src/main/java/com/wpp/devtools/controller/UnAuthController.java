@@ -29,7 +29,7 @@ public class UnAuthController {
 
     @ApiOperation("图片转文字")
     @PostMapping("imgToText")
-    public Result imgToText(MultipartFile file){
-        return ResultVo.success(unAuthService.imgToText(file));
+    public Result imgToText(MultipartFile file, String languageType){
+        return ResultVo.success(unAuthService.imgToText(file, languageType));
     }
 }

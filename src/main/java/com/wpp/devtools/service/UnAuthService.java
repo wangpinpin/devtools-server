@@ -42,7 +42,7 @@ public class UnAuthService {
      *
      * @return
      */
-    public Object imgToText(MultipartFile file) {
+    public Object imgToText(MultipartFile file, String languageType) {
         if (file.isEmpty()) {
             throw new CustomException(ExceptionCodeEnums.PARAM_NULL);
         }
@@ -56,7 +56,9 @@ public class UnAuthService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("image", imgStr);
-        
+        if(!StringUtils.isEmpty(languageType)) {
+            params.add("language_type", imgStr);
+        }
         String result = HttpUtil
                 .post(MessageFormat.format(UrlConfig.BAIDU_IMG_TO_TEXT_URL, accessToken), params,
                         headers);
