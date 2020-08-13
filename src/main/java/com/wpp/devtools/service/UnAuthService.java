@@ -94,7 +94,9 @@ public class UnAuthService {
     public Object getDoglickingDiary() {
 //        String msg = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null);
 //        return msg.substring(msg.indexOf("晴 ") + 2);
-        return HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null);
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("token", "yKxNvBtSS5UyrjhzjFWl");
+        return HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
     }
 
 
