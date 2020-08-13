@@ -92,8 +92,9 @@ public class UnAuthService {
      * @return
      */
     public Object getDoglickingDiary() {
-        String msg = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null);
-        return msg.substring(msg.indexOf("晴 ") + 2);
+//        String msg = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null);
+//        return msg.substring(msg.indexOf("晴 ") + 2);
+        return HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null);
     }
 
 
