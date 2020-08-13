@@ -3,6 +3,7 @@ package com.wpp.devtools.util;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 
 /**
@@ -96,5 +97,16 @@ public class RedistUtil {
     public Boolean delKey(String key) {
         return stringRedisTemplate.delete(key);
 
+    }
+
+    /**
+     * key + 1
+     * @param key
+     * @return
+     */
+    public Long incr(String key) {
+        RedisAtomicLong entityIdCounter = new RedisAtomicLong(key,
+                stringRedisTemplate.getConnectionFactory());
+        return entityIdCounter.getAndIncrement();
     }
 }

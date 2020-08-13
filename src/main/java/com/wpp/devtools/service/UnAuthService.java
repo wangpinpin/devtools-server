@@ -2,6 +2,7 @@ package com.wpp.devtools.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.wpp.devtools.config.BaiduConfig;
+import com.wpp.devtools.config.CommonConfig;
 import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.config.UrlConfig;
 import com.wpp.devtools.domain.entity.Wb;
@@ -92,10 +93,11 @@ public class UnAuthService {
      * @return
      */
     public Object getDoglickingDiary() {
-//        String msg = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null);
-//        return msg.substring(msg.indexOf("晴 ") + 2);
+
+        redistUtil.incr(CommonConfig.DOG_LICKING_DIARY_KEY);
+
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("token", "yKxNvBtSS5UyrjhzjFWl");
+        headers.add("token", CommonConfig.ALAPI_TOKEN);
         return HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
     }
 
@@ -106,6 +108,9 @@ public class UnAuthService {
      * @return
      */
     public Object imgToText(MultipartFile file, String languageType) {
+
+        redistUtil.incr(CommonConfig.IMG_TO_TEXT_KEY);
+
         if (file.isEmpty()) {
             throw new CustomException(ExceptionCodeEnums.PARAM_NULL);
         }
