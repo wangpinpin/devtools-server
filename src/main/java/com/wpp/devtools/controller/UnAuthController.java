@@ -33,6 +33,17 @@ public class UnAuthController {
         return ResultVo.success(unAuthService.imgToText(file, languageType));
     }
 
+    @ApiOperation("同步舔狗日记")
+    @PostMapping("getDoglickingDiaryListInsert")
+    public Result getDoglickingDiaryListInsert(){
+        try {
+            unAuthService.getDoglickingDiaryListInsert();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return ResultVo.success();
+    }
+
 
     @ApiOperation("a")
     @PostMapping("a")

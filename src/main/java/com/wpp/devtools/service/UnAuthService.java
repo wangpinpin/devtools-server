@@ -5,9 +5,11 @@ import com.wpp.devtools.config.BaiduConfig;
 import com.wpp.devtools.config.CommonConfig;
 import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.config.UrlConfig;
+import com.wpp.devtools.domain.entity.DogText;
 import com.wpp.devtools.domain.entity.Wb;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
+import com.wpp.devtools.repository.DogTextRepository;
 import com.wpp.devtools.repository.WbRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException.TooManyRequests;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -45,9 +48,12 @@ public class UnAuthService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private DogTextRepository dogTextRepository;
+
     @Transactional
     public void readTxtFileByFileUtils() {
-        File file = new File("C:\\Users\\pinpin.wang\\Desktop\\a.txt");
+        File file = new File("");
         List<Wb> wbs = new ArrayList<>(1000);
 
         try {
@@ -57,7 +63,8 @@ public class UnAuthService {
 
                 // 行数据转换成数组
                 String[] arr = line.split("      ");
-                Wb wb = Wb.builder().phone(Long.parseLong(arr[0].trim())).wid(Long.parseLong(arr[1].trim())).build();
+                Wb wb = Wb.builder().phone(Long.parseLong(arr[0].trim()))
+                        .wid(Long.parseLong(arr[1].trim())).build();
                 wbs.add(wb);
                 if (wbs.size() > 100) {
                     insertWbInfo(wbs);
@@ -92,15 +99,45 @@ public class UnAuthService {
      *
      * @return
      */
-    public Object getDoglickingDiary() {
+    public String getDoglickingDiary() {
 
         redistUtil.incr(CommonConfig.DOG_LICKING_DIARY_KEY);
+        return dogTextRepository.findContentByRandom();
 
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("token", CommonConfig.ALAPI_TOKEN);
-        return HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
     }
 
+
+    /**
+     * 同步舔狗日记
+     *
+     * @throws InterruptedException
+     */
+    @Transactional
+    public void getDoglickingDiaryListInsert() throws InterruptedException {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("token", CommonConfig.ALAPI_TOKEN);
+        try {
+            String result = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
+            JSONObject js = JSONObject.parseObject(result);
+            String content = JSONObject.parseObject(js.getString("data")).getString("content");
+            DogText dogTextContent = dogTextRepository.findByContent(content);
+            if (null == dogTextContent) {
+                DogText dogText = DogText.builder()
+                        .content(content)
+                        .build();
+                dogTextRepository.save(dogText);
+            }
+            Thread.sleep(1000);
+            getDoglickingDiaryListInsert();
+        } catch (Exception e) {
+            if (((TooManyRequests) e).getStatusText().equals("Too Many Requests")) {
+                Thread.sleep(5000);
+                getDoglickingDiaryListInsert();
+            }
+        }
+
+
+    }
 
     /**
      * 图片转文字
@@ -124,7 +161,7 @@ public class UnAuthService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("image", imgStr);
-        if(!StringUtils.isEmpty(languageType)) {
+        if (!StringUtils.isEmpty(languageType)) {
             params.add("language_type", imgStr);
         }
         String result = HttpUtil
