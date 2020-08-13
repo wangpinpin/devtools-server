@@ -32,4 +32,12 @@ public class UnAuthController {
     public Result imgToText(MultipartFile file, String languageType){
         return ResultVo.success(unAuthService.imgToText(file, languageType));
     }
+
+
+    @ApiOperation("a")
+    @PostMapping("a")
+    public Result a(){
+        unAuthService.readTxtFileByFileUtils();
+        return ResultVo.success();
+    }
 }
