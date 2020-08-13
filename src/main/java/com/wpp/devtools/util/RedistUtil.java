@@ -26,7 +26,6 @@ public class RedistUtil {
      */
     public void setString(String key, String data, Long timeout) {
         try {
-
             stringRedisTemplate.opsForValue().set(key, data);
             if (timeout != null) {
                 stringRedisTemplate.expire(key, timeout, TimeUnit.SECONDS);

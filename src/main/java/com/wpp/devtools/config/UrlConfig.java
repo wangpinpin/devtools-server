@@ -2,8 +2,7 @@ package com.wpp.devtools.config;
 
 public class UrlConfig {
 
-//    public static final String DOG_LICKING_DIARY_URL = "https://v1.alapi.cn/api/dog?format=text";
-    public static final String DOG_LICKING_DIARY_URL = "http://test.isiyuan.net/tiangou/tg.php";
+    public static final String DOG_LICKING_DIARY_URL = "https://v1.alapi.cn/api/dog?format=text";
 
     public static final String BAIDU_ACCESS_TOKEN_URL = "https://aip.baidubce.com/oauth/2.0/token";
 
