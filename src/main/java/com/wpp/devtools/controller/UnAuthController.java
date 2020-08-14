@@ -31,6 +31,7 @@ public class UnAuthController {
 
     @ApiOperation("图片转文字")
     @PostMapping("imgToText")
+    @AccessLimit(seconds = 10, maxCount = 3)
     public Result imgToText(MultipartFile file, String languageType) {
         return ResultVo.success(unAuthService.imgToText(file, languageType));
     }
