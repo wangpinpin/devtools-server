@@ -1,5 +1,6 @@
 package com.wpp.devtools.controller;
 
+import com.wpp.devtools.domain.annotation.AccessLimit;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.UnAuthService;
@@ -23,19 +24,20 @@ public class UnAuthController {
 
     @ApiOperation("舔狗日记")
     @GetMapping("getDoglickingDiary")
-    public Result getDoglickingDiary(){
+    @AccessLimit(seconds = 10, maxCount = 10)
+    public Result getDoglickingDiary() {
         return ResultVo.success(unAuthService.getDoglickingDiary());
     }
 
     @ApiOperation("图片转文字")
     @PostMapping("imgToText")
-    public Result imgToText(MultipartFile file, String languageType){
+    public Result imgToText(MultipartFile file, String languageType) {
         return ResultVo.success(unAuthService.imgToText(file, languageType));
     }
 
     @ApiOperation("同步舔狗日记")
     @PostMapping("getDoglickingDiaryListInsert")
-    public Result getDoglickingDiaryListInsert(){
+    public Result getDoglickingDiaryListInsert() {
         try {
             unAuthService.getDoglickingDiaryListInsert();
         } catch (InterruptedException e) {

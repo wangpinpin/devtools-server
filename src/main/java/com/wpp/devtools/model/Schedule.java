@@ -35,13 +35,9 @@ public class Schedule implements SchedulingConfigurer {
     @Scheduled(cron = "0 0 1 * * ?")
     public void task1() {
         long startTime = System.currentTimeMillis();
-        try {
-            unAuthService.getDoglickingDiaryListInsert();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        log.info("定时任务: {}, 完成, 耗时： {}s", "同步舔狗日记",
-                (System.currentTimeMillis() - startTime) / 1000);
+        //            unAuthService.getDoglickingDiaryListInsert();
+//        log.info("定时任务: {}, 完成, 耗时： {}s", "同步舔狗日记",
+//                (System.currentTimeMillis() - startTime) / 1000);
     }
 
 }

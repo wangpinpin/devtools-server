@@ -12,9 +12,12 @@ import com.wpp.devtools.repository.DogTextRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.RedistUtil;
+import com.wpp.devtools.util.SSLUtil;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -76,9 +79,16 @@ public class UnAuthService {
 //            }
 //        }
 
+        try {
+            SSLUtil.turnOffSslChecking();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
         for (int i = 0; i < 500; i ++) {
             String result = HttpUtil.get("https://cloud.qqshabi.cn/api/tiangou/api.php",null);
-            String content = result.substring(result.indexOf("晴 ") + 2);
+            String content = result.substring(result.indexOf("日晴") + 3);
                 DogText dogTextContent = dogTextRepository.findByContent(content);
                 if (null == dogTextContent) {
                     DogText dogText = DogText.builder()
@@ -86,7 +96,7 @@ public class UnAuthService {
                             .build();
                     dogTextRepository.save(dogText);
                 }
-                Thread.sleep(100);
+//                Thread.sleep(100);
         }
 
 

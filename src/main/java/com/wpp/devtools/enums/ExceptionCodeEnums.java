@@ -21,6 +21,8 @@ public enum ExceptionCodeEnums {
     JWT_ERROR(-20005, "TOKEN异常"),
     PARAM_ERROR(-20006, "参数异常"),
     HTTP_REQUEST_ERROR(-20007, "接口请求异常"),
+    HTTP_REQUEST_FREQUENTLY(-20008, "请求太频繁"),
+    GET_IP_ERROR(-20009, "获取IP异常"),
 
     UPLOAD_FILE_NULL(-20010, "上传文件不能为空"),
     UPLOAD_FILE_ERROR(-20011, "上传文件异常"),

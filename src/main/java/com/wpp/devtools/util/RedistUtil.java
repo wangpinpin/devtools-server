@@ -101,6 +101,7 @@ public class RedistUtil {
 
     /**
      * key + 1
+     *
      * @param key
      * @return
      */
@@ -108,5 +109,15 @@ public class RedistUtil {
         RedisAtomicLong entityIdCounter = new RedisAtomicLong(key,
                 stringRedisTemplate.getConnectionFactory());
         return entityIdCounter.getAndIncrement();
+    }
+
+    public Long incr(String key, long seconds) {
+        RedisAtomicLong entityIdCounter = new RedisAtomicLong(key,
+                stringRedisTemplate.getConnectionFactory());
+        Long increment = entityIdCounter.getAndIncrement();
+        if ((null == increment || increment.longValue() == 0) && seconds > 0) {//初始设置过期时间
+            entityIdCounter.expire(seconds, TimeUnit.SECONDS);
+        }
+        return increment;
     }
 }
