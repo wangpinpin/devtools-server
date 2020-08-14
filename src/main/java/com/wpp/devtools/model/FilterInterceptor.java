@@ -47,11 +47,11 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
             }
             int seconds = accessLimit.seconds();
             int maxCount = accessLimit.maxCount();
-            String key = request.getRequestURI();
             String ip = getIpAddr(request);
+            String key = request.getRequestURI() + ip;
 
             //统计每个IP访问方法次数
-            redistUtil.incr(key + ip);
+            redistUtil.incr("count" + key + ip);
             //从redis中获取用户访问的次数(redis中保存的key保存(seconds)秒，redisUtils使用的单位是秒，意思是5秒内重复请求接口限制次数)
             String countString = redistUtil.getString(key);
             if (countString == null) {
@@ -62,6 +62,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
                 redistUtil.incr(key);
             } else {
                 //超出访问次数
+                log.info("ip: " + ip + ", 超出访问次数");
                 throw new CustomException(ExceptionCodeEnums.HTTP_REQUEST_FREQUENTLY);
             }
         }
