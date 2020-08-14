@@ -62,7 +62,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
                 redistUtil.incr(key);
             } else {
                 //超出访问次数
-                log.info("ip: " + ip + ", 超出访问次数");
+                log.info("ip: " + ip + ", 请求太频繁");
                 throw new CustomException(ExceptionCodeEnums.HTTP_REQUEST_FREQUENTLY);
             }
         }

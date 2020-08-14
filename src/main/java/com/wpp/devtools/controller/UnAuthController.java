@@ -24,7 +24,7 @@ public class UnAuthController {
 
     @ApiOperation("舔狗日记")
     @GetMapping("getDoglickingDiary")
-    @AccessLimit(seconds = 10, maxCount = 10)
+    @AccessLimit(seconds = 10, maxCount = 20)
     public Result getDoglickingDiary() {
         return ResultVo.success(unAuthService.getDoglickingDiary());
     }
