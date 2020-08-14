@@ -44,11 +44,4 @@ public class UnAuthController {
         return ResultVo.success();
     }
 
-
-    @ApiOperation("a")
-    @PostMapping("a")
-    public Result a(){
-        unAuthService.readTxtFileByFileUtils();
-        return ResultVo.success();
-    }
 }

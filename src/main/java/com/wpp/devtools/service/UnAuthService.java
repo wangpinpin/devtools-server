@@ -6,34 +6,19 @@ import com.wpp.devtools.config.CommonConfig;
 import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.config.UrlConfig;
 import com.wpp.devtools.domain.entity.DogText;
-import com.wpp.devtools.domain.entity.Wb;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.repository.DogTextRepository;
-import com.wpp.devtools.repository.WbRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.RedistUtil;
-import java.io.File;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.LineIterator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpClientErrorException.TooManyRequests;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -46,53 +31,7 @@ public class UnAuthService {
     private RedistUtil redistUtil;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private DogTextRepository dogTextRepository;
-
-    @Transactional
-    public void readTxtFileByFileUtils() {
-        File file = new File("");
-        List<Wb> wbs = new ArrayList<>(1000);
-
-        try {
-            LineIterator lineIterator = FileUtils.lineIterator(file);
-            while (lineIterator.hasNext()) {
-                String line = lineIterator.nextLine();
-
-                // 行数据转换成数组
-                String[] arr = line.split("      ");
-                Wb wb = Wb.builder().phone(Long.parseLong(arr[0].trim()))
-                        .wid(Long.parseLong(arr[1].trim())).build();
-                wbs.add(wb);
-                if (wbs.size() > 100) {
-                    insertWbInfo(wbs);
-                    wbs.clear();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void insertWbInfo(List<Wb> wbs) {
-        jdbcTemplate.batchUpdate("INSERT INTO wb (phone, wid) VALUES (?, ?)",
-                new BatchPreparedStatementSetter() {
-                    @Override
-                    public void setValues(PreparedStatement ps, int i)
-                            throws SQLException {
-                        Wb wb = wbs.get(i);
-                        ps.setLong(1, wb.getPhone());
-                        ps.setLong(2, wb.getWid());
-                    }
-
-                    @Override
-                    public int getBatchSize() {
-                        return wbs.size();
-                    }
-                });
-    }
 
     /**
      * 舔狗日记
@@ -112,28 +51,42 @@ public class UnAuthService {
      *
      * @throws InterruptedException
      */
-    @Transactional
     public void getDoglickingDiaryListInsert() throws InterruptedException {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("token", CommonConfig.ALAPI_TOKEN);
-        try {
-            String result = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
-            JSONObject js = JSONObject.parseObject(result);
-            String content = JSONObject.parseObject(js.getString("data")).getString("content");
-            DogText dogTextContent = dogTextRepository.findByContent(content);
-            if (null == dogTextContent) {
-                DogText dogText = DogText.builder()
-                        .content(content)
-                        .build();
-                dogTextRepository.save(dogText);
-            }
-            Thread.sleep(1000);
-            getDoglickingDiaryListInsert();
-        } catch (Exception e) {
-            if (((TooManyRequests) e).getStatusText().equals("Too Many Requests")) {
-                Thread.sleep(5000);
-                getDoglickingDiaryListInsert();
-            }
+//        for (int i = 0; i < 500; i ++) {
+//            try {
+//                String result = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
+//                JSONObject js = JSONObject.parseObject(result);
+//                String content = JSONObject.parseObject(js.getString("data")).getString("content");
+//                DogText dogTextContent = dogTextRepository.findByContent(content);
+//                if (null == dogTextContent) {
+//                    DogText dogText = DogText.builder()
+//                            .content(content)
+//                            .build();
+//                    dogTextRepository.save(dogText);
+//                }
+//                Thread.sleep(1000);
+//            } catch (Exception e) {
+//                if (((TooManyRequests) e).getStatusText().equals("Too Many Requests")) {
+//                    Thread.sleep(5000);
+//                }else {
+//                    break;
+//                }
+//            }
+//        }
+
+        for (int i = 0; i < 500; i ++) {
+            String result = HttpUtil.get("https://cloud.qqshabi.cn/api/tiangou/api.php",null);
+            String content = result.substring(result.indexOf("晴 ") + 2);
+                DogText dogTextContent = dogTextRepository.findByContent(content);
+                if (null == dogTextContent) {
+                    DogText dogText = DogText.builder()
+                            .content(content)
+                            .build();
+                    dogTextRepository.save(dogText);
+                }
+                Thread.sleep(100);
         }
 
 

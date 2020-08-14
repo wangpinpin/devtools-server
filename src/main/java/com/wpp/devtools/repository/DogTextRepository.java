@@ -1,7 +1,6 @@
 package com.wpp.devtools.repository;
 
 import com.wpp.devtools.domain.entity.DogText;
-import com.wpp.devtools.domain.entity.Wb;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
