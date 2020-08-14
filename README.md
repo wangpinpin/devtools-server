@@ -2,9 +2,8 @@
 
 本项目完全开源项目, 项目持续更新中
 
-spring boot
-redis
-mysql
-vue
+后端： Spring Boot
+前端： Vue
+
 
 前端项目地址: https://github.com/wangpinpin/devtools
