@@ -8,6 +8,7 @@ import com.wpp.devtools.util.WXUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
+import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,7 +54,7 @@ public class UnAuthController {
         return ResultVo.success();
     }
 
-    @PostMapping("wxUrlTokenValid")
+    @GetMapping("wxUrlTokenValid")
     public String wxUrlTokenValid() {
         return WXUtils.checkUrl(request);
     }
