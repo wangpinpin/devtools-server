@@ -4,8 +4,10 @@ import com.wpp.devtools.domain.annotation.AccessLimit;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.UnAuthService;
+import com.wpp.devtools.util.WXUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/unAuth/")
 @Api(tags = {"无权限接口服务"})
 public class UnAuthController {
+
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     private UnAuthService unAuthService;
@@ -45,6 +51,11 @@ public class UnAuthController {
             e.printStackTrace();
         }
         return ResultVo.success();
+    }
+
+    @PostMapping("wxUrlTokenValid")
+    public String wxUrlTokenValid() {
+        return WXUtils.checkUrl(request);
     }
 
 }
