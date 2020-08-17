@@ -16,7 +16,7 @@ public class WXKeyconfig {
     @Value("${WX.APPID}")
     public String appId;
 
-    @Value("${WX.SECRET}")
+    @Value("${WX.APPSECRET}")
     public String appSecret;
 
 }

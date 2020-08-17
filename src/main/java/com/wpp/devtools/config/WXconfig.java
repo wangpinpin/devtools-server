@@ -20,10 +20,11 @@ public class WXconfig {
     public String secret;
 
     public static final String WX_URL_TOKEN = "wangpinpin";
-    public static final String ACCESS_TOKEN_KEY = "ACCESS_TOKEN_KEY";
-    public static final String WX_GET_ACCESS_TOKEN_URL = " https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}";
+    public static final String WX_ACCESS_TOKEN_KEY = "WX_ACCESS_TOKEN_KEY";
+    public static final String WX_GET_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}";
     public static final String WX_CREATE_MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token={0}";
     public static final String WX_GET_USER_LIST = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={1}&next_openid={1}";
+    public static final String WX_GET_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang=zh_CN";
 
 
 }
