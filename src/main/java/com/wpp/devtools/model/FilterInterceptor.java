@@ -48,10 +48,15 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
             int seconds = accessLimit.seconds();
             int maxCount = accessLimit.maxCount();
             String ip = getIpAddr(request);
-            String key = request.getRequestURI() + ip;
+            String uri = request.getRequestURI();
+            String key = uri + ip;
+
+            //统计每个方法总共调用次数
+            redistUtil.incr(uri);
 
             //统计每个IP访问方法次数
             redistUtil.incr("count" + key);
+
             //从redis中获取用户访问的次数(redis中保存的key保存(seconds)秒，redisUtils使用的单位是秒，意思是5秒内重复请求接口限制次数)
             String countString = redistUtil.getString(key);
             if (countString == null) {
@@ -97,7 +102,6 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
                 }
             }
             // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
-            // "***.***.***.***".length() = 15
             if (ipAddress != null && ipAddress.length() > 15) {
                 if (ipAddress.indexOf(",") > 0) {
                     ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));

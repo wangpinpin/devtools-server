@@ -42,8 +42,6 @@ public class UnAuthService {
      * @return
      */
     public String getDoglickingDiary() {
-
-        redistUtil.incr(CommonConfig.DOG_LICKING_DIARY_KEY);
         return dogTextRepository.findContentByRandom();
 
     }
@@ -108,9 +106,7 @@ public class UnAuthService {
      * @return
      */
     public Object imgToText(MultipartFile file, String languageType) {
-
-        redistUtil.incr(CommonConfig.IMG_TO_TEXT_KEY);
-
+        
         if (file.isEmpty()) {
             throw new CustomException(ExceptionCodeEnums.PARAM_NULL);
         }

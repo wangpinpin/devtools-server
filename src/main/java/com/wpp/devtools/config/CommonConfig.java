@@ -13,8 +13,6 @@ public class CommonConfig {
 
     //https://alapi.net/ token
     public final static String ALAPI_TOKEN = "yKxNvBtSS5UyrjhzjFWl";
-    public final static String DOG_LICKING_DIARY_KEY = "DOG_LICKING_DIARY_KEY";
-    public final static String IMG_TO_TEXT_KEY = "IMG_TO_TEXT_KEY";
 
 
 }
