@@ -19,6 +19,27 @@ public class RedistUtil {
     private StringRedisTemplate stringRedisTemplate;
 
     /**
+     * 存放string类型到hash
+     *
+     * @param key1     key1
+     * @param key2     key2
+     * @param data    数据
+     */
+    public void setStringToHash(String key1,String key2, String data) {
+        stringRedisTemplate.opsForHash().put(key1, key2, data);
+    }
+
+    /**
+     * 获取放string类型到hash
+     *
+     * @param key1     key1
+     * @param key2     key2
+     */
+    public boolean getStringToHash(String key1,String key2) {
+       return stringRedisTemplate.opsForHash().hasKey(key1, key2);
+    }
+
+    /**
      * 存放string类型
      *
      * @param key     key

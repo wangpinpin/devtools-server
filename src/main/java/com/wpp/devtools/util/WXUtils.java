@@ -17,14 +17,14 @@ public class WXUtils {
 
     //验证服务器地址
     public static String checkUrl(HttpServletRequest request) {
-        //获取参数配置
+        //参数配置
         String signature = request.getParameter("signature");
-        //获取时间托
+        //时间戳
         String timestamp = request.getParameter("timestamp");
         String nonce = request.getParameter("nonce");
-        //获取echostr 字符
+        //echostr 字符
         String echostr = request.getParameter("echostr");
-        //获取token 此token跟需跟微信公众号的token一致；
+        //token 此token跟需跟微信公众号的token一致；
         String token = WXconfig.WX_URL_TOKEN;
         String str = "";
         try {

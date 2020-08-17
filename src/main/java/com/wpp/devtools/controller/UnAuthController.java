@@ -54,9 +54,5 @@ public class UnAuthController {
         return ResultVo.success();
     }
 
-    @GetMapping("wxUrlTokenValid")
-    public String wxUrlTokenValid() {
-        return WXUtils.checkUrl(request);
-    }
 
 }

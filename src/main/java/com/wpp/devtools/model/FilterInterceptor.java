@@ -1,5 +1,6 @@
 package com.wpp.devtools.model;
 
+import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.domain.annotation.AccessLimit;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
@@ -25,7 +26,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 @Slf4j
 public class FilterInterceptor extends HandlerInterceptorAdapter {
 
-    private static final String[] PROXYS = {"x-forwarded-for", "Proxy-Client-IP", "WL-Proxy-Client-IP", "X-Real-IP", "HTTP_CLIENT_IP"};
+    private static final String[] PROXYS = {"x-forwarded-for", "Proxy-Client-IP",
+            "WL-Proxy-Client-IP", "X-Real-IP", "HTTP_CLIENT_IP"};
 
 
     @Autowired
@@ -33,7 +35,14 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-            Object handler){
+            Object handler) {
+
+        String ip = getIpAddr(request);
+
+        //IP黑名单
+        if (redistUtil.getStringToHash(RedisKeyConfig.BLACK, ip)) {
+            throw new CustomException(ExceptionCodeEnums.ERROR);
+        }
 
         //判断请求是否属于方法的请求
         if (handler instanceof HandlerMethod) {
@@ -47,7 +56,6 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
             }
             int seconds = accessLimit.seconds();
             int maxCount = accessLimit.maxCount();
-            String ip = getIpAddr(request);
             String uri = request.getRequestURI();
             String key = uri + ip;
 
@@ -55,7 +63,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
             redistUtil.incr(uri);
 
             //统计每个IP访问方法次数
-            redistUtil.incr("count" + key);
+            redistUtil.incr(RedisKeyConfig.COUNT + key);
 
             //从redis中获取用户访问的次数(redis中保存的key保存(seconds)秒，redisUtils使用的单位是秒，意思是5秒内重复请求接口限制次数)
             String countString = redistUtil.getString(key);
@@ -68,6 +76,11 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
             } else {
                 //超出访问次数
                 log.info("ip: " + ip + ", 请求太频繁");
+                Long warningCount = redistUtil.incr(RedisKeyConfig.WARNING + ip);
+                //警告次数超过20次，ip上黑名单
+                if (warningCount > 20) {
+                    redistUtil.setStringToHash(RedisKeyConfig.BLACK, ip, "");
+                }
                 throw new CustomException(ExceptionCodeEnums.HTTP_REQUEST_FREQUENTLY);
             }
         }
@@ -82,7 +95,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
         String ipAddress = null;
 
         try {
-            for (String proxy: PROXYS) {
+            for (String proxy : PROXYS) {
                 ipAddress = request.getHeader(proxy);
                 if (StringUtils.isNotBlank(ipAddress) && !"unknown".equalsIgnoreCase(ipAddress)) {
                     return ipAddress;
