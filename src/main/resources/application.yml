@@ -1,0 +1,34 @@
+spring:
+  profiles:
+    active: prod
+  datasource:
+    url: jdbc:mysql://XXXX:3306/devtools?useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: XXX
+    password: XXX
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: XXX
+    port: 6379
+    password: XXX
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  application:
+    name: devtools-server
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+BAIDU:
+  APP_ID: XXXX
+  API_KEY: XXXX
+  SECRET_KEY: XXXX
+WX:
+  APPID: XXX
+  SECRET: XXX
