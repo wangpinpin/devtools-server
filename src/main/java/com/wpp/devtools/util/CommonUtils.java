@@ -5,6 +5,8 @@ import com.google.common.base.CaseFormat;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +16,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
@@ -25,8 +29,11 @@ import sun.misc.BASE64Encoder;
  **/
 public class CommonUtils {
 
+    private static final String[] PROXYS = {"x-forwarded-for", "Proxy-Client-IP",
+            "WL-Proxy-Client-IP", "X-Real-IP", "HTTP_CLIENT_IP"};
+
     private final static SimpleDateFormat longSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    ;
+
     private final static SimpleDateFormat shortSdf = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
@@ -218,4 +225,41 @@ public class CommonUtils {
         }
     }
 
+    /**
+     * 获取客户端ip
+     */
+    public static String getIpAddr(HttpServletRequest request) {
+        String ipAddress = null;
+
+        try {
+            for (String proxy : PROXYS) {
+                ipAddress = request.getHeader(proxy);
+                if (StringUtils.isNotBlank(ipAddress) && !"unknown".equalsIgnoreCase(ipAddress)) {
+                    return ipAddress;
+                }
+            }
+            if (StringUtils.isBlank(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
+                ipAddress = request.getRemoteAddr();
+                if (ipAddress.equals("127.0.0.1")) {
+                    // 根据网卡取本机配置的IP
+                    InetAddress inet = null;
+                    try {
+                        inet = InetAddress.getLocalHost();
+                    } catch (UnknownHostException e) {
+                        throw new CustomException(ExceptionCodeEnums.GET_IP_ERROR);
+                    }
+                    ipAddress = inet.getHostAddress();
+                }
+            }
+            // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
+            if (ipAddress != null && ipAddress.length() > 15) {
+                if (ipAddress.indexOf(",") > 0) {
+                    ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
+                }
+            }
+        } catch (Exception e) {
+            ipAddress = "";
+        }
+        return ipAddress;
+    }
 }

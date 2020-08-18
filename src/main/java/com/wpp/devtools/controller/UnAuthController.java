@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,5 +55,16 @@ public class UnAuthController {
         return ResultVo.success();
     }
 
+    @ApiOperation("添加留言")
+    @PostMapping("addMsgBoard")
+    public Result addMsgBoard(@RequestParam String msg) {
+        unAuthService.addMsgBoard(msg, request);
+        return ResultVo.success();
+    }
 
+    @ApiOperation("查询留言列表")
+    @GetMapping("findMsgBoard")
+    public Result findMsgBoard(int pageNo, int pageSize) {
+        return ResultVo.success(unAuthService.findMsgBoard(pageNo, pageSize));
+    }
 }

@@ -4,6 +4,7 @@ import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.domain.annotation.AccessLimit;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
+import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.RedistUtil;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -26,8 +27,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 @Slf4j
 public class FilterInterceptor extends HandlerInterceptorAdapter {
 
-    private static final String[] PROXYS = {"x-forwarded-for", "Proxy-Client-IP",
-            "WL-Proxy-Client-IP", "X-Real-IP", "HTTP_CLIENT_IP"};
+
 
 
     @Autowired
@@ -37,7 +37,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
             Object handler) {
 
-        String ip = getIpAddr(request);
+        String ip = CommonUtils.getIpAddr(request);
 
         //IP黑名单
         if (redistUtil.getStringToHash(RedisKeyConfig.BLACK, ip)) {
@@ -88,41 +88,5 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
     }
 
 
-    /**
-     * 获取客户端ip
-     */
-    public static String getIpAddr(HttpServletRequest request) {
-        String ipAddress = null;
 
-        try {
-            for (String proxy : PROXYS) {
-                ipAddress = request.getHeader(proxy);
-                if (StringUtils.isNotBlank(ipAddress) && !"unknown".equalsIgnoreCase(ipAddress)) {
-                    return ipAddress;
-                }
-            }
-            if (StringUtils.isBlank(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
-                ipAddress = request.getRemoteAddr();
-                if (ipAddress.equals("127.0.0.1")) {
-                    // 根据网卡取本机配置的IP
-                    InetAddress inet = null;
-                    try {
-                        inet = InetAddress.getLocalHost();
-                    } catch (UnknownHostException e) {
-                        throw new CustomException(ExceptionCodeEnums.GET_IP_ERROR);
-                    }
-                    ipAddress = inet.getHostAddress();
-                }
-            }
-            // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
-            if (ipAddress != null && ipAddress.length() > 15) {
-                if (ipAddress.indexOf(",") > 0) {
-                    ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
-                }
-            }
-        } catch (Exception e) {
-            ipAddress = "";
-        }
-        return ipAddress;
-    }
 }

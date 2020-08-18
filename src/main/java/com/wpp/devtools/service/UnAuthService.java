@@ -6,21 +6,23 @@ import com.wpp.devtools.config.CommonConfig;
 import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.config.UrlConfig;
 import com.wpp.devtools.domain.entity.DogText;
+import com.wpp.devtools.domain.entity.TextBoard;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.repository.DogTextRepository;
+import com.wpp.devtools.repository.TextBoardRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.RedistUtil;
-import com.wpp.devtools.util.SSLUtil;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException.TooManyRequests;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -34,6 +36,9 @@ public class UnAuthService {
 
     @Autowired
     private DogTextRepository dogTextRepository;
+
+    @Autowired
+    private TextBoardRepository textBoardRepository;
 
     /**
      * 舔狗日记
@@ -54,27 +59,27 @@ public class UnAuthService {
     public void getDoglickingDiaryListInsert() throws InterruptedException {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("token", CommonConfig.ALAPI_TOKEN);
-//        for (int i = 0; i < 500; i ++) {
-//            try {
-//                String result = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
-//                JSONObject js = JSONObject.parseObject(result);
-//                String content = JSONObject.parseObject(js.getString("data")).getString("content");
-//                DogText dogTextContent = dogTextRepository.findByContent(content);
-//                if (null == dogTextContent) {
-//                    DogText dogText = DogText.builder()
-//                            .content(content)
-//                            .build();
-//                    dogTextRepository.save(dogText);
-//                }
+        for (int i = 0; i < 500; i++) {
+            try {
+                String result = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
+                JSONObject js = JSONObject.parseObject(result);
+                String content = JSONObject.parseObject(js.getString("data")).getString("content");
+                DogText dogTextContent = dogTextRepository.findByContent(content);
+                if (null == dogTextContent) {
+                    DogText dogText = DogText.builder()
+                            .content(content)
+                            .build();
+                    dogTextRepository.save(dogText);
+                }
 //                Thread.sleep(1000);
-//            } catch (Exception e) {
-//                if (((TooManyRequests) e).getStatusText().equals("Too Many Requests")) {
-//                    Thread.sleep(5000);
-//                }else {
-//                    break;
-//                }
-//            }
-//        }
+            } catch (Exception e) {
+                if (((TooManyRequests) e).getStatusText().equals("Too Many Requests")) {
+                    Thread.sleep(5000);
+                } else {
+                    break;
+                }
+            }
+        }
 
 /*        try {
             SSLUtil.turnOffSslChecking();
@@ -83,7 +88,7 @@ public class UnAuthService {
         } catch (KeyManagementException e) {
             e.printStackTrace();
         }*/
-        for (int i = 0; i < 500; i++) {
+/*        for (int i = 0; i < 500; i++) {
             String result = HttpUtil.get("http://www.tiangouriji.cc/api/", null);
 //            String content = result.substring(result.indexOf("日晴") + 3);
             JSONObject jo = JSONObject.parseObject(result);
@@ -96,8 +101,7 @@ public class UnAuthService {
                 dogTextRepository.save(dogText);
             }
                 Thread.sleep(500);
-        }
-
+        }*/
 
     }
 
@@ -157,5 +161,30 @@ public class UnAuthService {
         }
 
         return accessToken;
+    }
+
+    /**
+     * 添加留言
+     *
+     * @param msg
+     * @return
+     */
+    @Transactional
+    public void addMsgBoard(String msg, HttpServletRequest request) {
+        TextBoard textBoard = TextBoard.builder()
+                .ip(CommonUtils.getIpAddr(request))
+                .content(msg).build();
+        textBoardRepository.save(textBoard);
+    }
+
+    /**
+     * 查询留言列表
+     *
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    public Object findMsgBoard(int pageNo, int pageSize) {
+        return textBoardRepository.findAllByPage(pageNo * pageSize, pageSize);
     }
 }
