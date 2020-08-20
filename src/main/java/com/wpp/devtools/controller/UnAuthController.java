@@ -7,11 +7,13 @@ import com.wpp.devtools.service.UnAuthService;
 import com.wpp.devtools.util.WXUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,6 +55,12 @@ public class UnAuthController {
             e.printStackTrace();
         }
         return ResultVo.success();
+    }
+
+    @ApiOperation("添加舔狗日记")
+    @PostMapping("addGogText")
+    public Result addGogText(@RequestBody List<String> texts) {
+        return ResultVo.success(unAuthService.addGogText(texts));
     }
 
     @ApiOperation("添加留言")

@@ -38,7 +38,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
             Object handler) {
 
         String ip = CommonUtils.getIpAddr(request);
-
+        log.info("IP进入: " + ip);
         //IP黑名单
         if (redistUtil.getStringToHash(RedisKeyConfig.BLACK, ip)) {
             throw new CustomException(ExceptionCodeEnums.ERROR);
@@ -59,12 +59,6 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
             String uri = request.getRequestURI();
             String key = uri + ip;
 
-            //统计每个方法总共调用次数
-            redistUtil.incr(uri);
-
-            //统计每个IP访问方法次数
-            redistUtil.incr(RedisKeyConfig.COUNT + key);
-
             //从redis中获取用户访问的次数(redis中保存的key保存(seconds)秒，redisUtils使用的单位是秒，意思是5秒内重复请求接口限制次数)
             String countString = redistUtil.getString(key);
             if (countString == null) {
@@ -76,9 +70,10 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
             } else {
                 //超出访问次数
                 log.info("ip: " + ip + ", 请求太频繁");
+                redistUtil.delKey(key);
                 Long warningCount = redistUtil.incr(RedisKeyConfig.WARNING + ip);
-                //警告次数超过20次，ip上黑名单
-                if (warningCount > 20) {
+                //警告次数超过10次，ip上黑名单
+                if (warningCount > 10) {
                     redistUtil.setStringToHash(RedisKeyConfig.BLACK, ip, "");
                 }
                 throw new CustomException(ExceptionCodeEnums.HTTP_REQUEST_FREQUENTLY);

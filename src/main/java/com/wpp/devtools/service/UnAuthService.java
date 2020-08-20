@@ -15,6 +15,7 @@ import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.RedistUtil;
 import java.text.MessageFormat;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -186,5 +187,27 @@ public class UnAuthService {
      */
     public Object findMsgBoard(int pageNo, int pageSize) {
         return textBoardRepository.findAllByPage(pageNo * pageSize, pageSize);
+    }
+
+    /**
+     * 添加舔狗日记
+     * @param texts
+     * @return
+     */
+    public Object addGogText(List<String> texts) {
+        final int[] count = {0};
+        if(null != texts && texts.size() > 0) {
+            texts.forEach(e -> {
+                DogText dogTextContent = dogTextRepository.findByContent(e);
+                if (null == dogTextContent) {
+                    DogText dogText = DogText.builder()
+                            .content(e)
+                            .build();
+                    dogTextRepository.save(dogText);
+                    count[0]++;
+                }
+            });
+        }
+        return count[0];
     }
 }
