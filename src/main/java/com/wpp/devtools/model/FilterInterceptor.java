@@ -40,17 +40,17 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
 
         String ip = CommonUtils.getIpAddr(request);
         log.info("IP进入: " + ip);
-        Enumeration headerNames = request.getHeaderNames();
+/*        Enumeration headerNames = request.getHeaderNames();
         Map map = new HashMap<>();
         while (headerNames.hasMoreElements()) {
             String key = (String) headerNames.nextElement();
             String value = request.getHeader(key);
             map.put(key, value);
         }
-        log.info("haed: " + JSON.toJSONString(map));
+        log.info("haed: " + JSON.toJSONString(map));*/
         //IP黑名单
         if (redistUtil.getStringToHash(RedisKeyConfig.BLACKLIST, ip)) {
-            throw new CustomException(ExceptionCodeEnums.ERROR);
+            throw new CustomException(ExceptionCodeEnums.PARAM_NULL);
         }
 
         //判断请求是否属于方法的请求
