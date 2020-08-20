@@ -11,7 +11,7 @@ public class RedisKeyConfig {
     public static final String BAIDU_ACCESS_TOKEN_KEY = "BAIDU_ACCESS_TOKEN_KEY";
     public static final String COUNT = "count";
     public static final String WARNING = "warning";
-    public static final String BLACK = "BLACK";
+    public static final String BLACKLIST = "BLACKLIST";
 
 
 }

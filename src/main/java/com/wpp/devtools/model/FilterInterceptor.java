@@ -7,15 +7,12 @@ import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.RedistUtil;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -52,7 +49,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
         }
         log.info("haed: " + JSON.toJSONString(map));
         //IP黑名单
-        if (redistUtil.getStringToHash(RedisKeyConfig.BLACK, ip)) {
+        if (redistUtil.getStringToHash(RedisKeyConfig.BLACKLIST, ip)) {
             throw new CustomException(ExceptionCodeEnums.ERROR);
         }
 
@@ -89,7 +86,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
                 Long warningCount = redistUtil.incr(RedisKeyConfig.WARNING + ip);
                 //警告次数超过10次，ip上黑名单
                 if (warningCount > 10) {
-                    redistUtil.setStringToHash(RedisKeyConfig.BLACK, ip, "");
+                    redistUtil.setStringToHash(RedisKeyConfig.BLACKLIST, ip, "");
                 }
                 throw new CustomException(ExceptionCodeEnums.HTTP_REQUEST_FREQUENTLY);
             }
