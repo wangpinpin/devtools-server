@@ -39,6 +39,13 @@ public class UnAuthController {
         return ResultVo.success(unAuthService.getDoglickingDiary());
     }
 
+    @ApiOperation("每日一文")
+    @GetMapping("getEveryDayText")
+    @AccessLimit(seconds = 10, maxCount = 3)
+    public Result getEveryDayText() {
+        return ResultVo.success(unAuthService.getEveryDayText());
+    }
+
     @ApiOperation("图片转文字")
     @PostMapping("imgToText")
     @AccessLimit(seconds = 10, maxCount = 3)

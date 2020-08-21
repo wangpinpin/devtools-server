@@ -6,10 +6,12 @@ import com.wpp.devtools.config.CommonConfig;
 import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.config.UrlConfig;
 import com.wpp.devtools.domain.entity.DogText;
+import com.wpp.devtools.domain.entity.EveryDayText;
 import com.wpp.devtools.domain.entity.TextBoard;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.repository.DogTextRepository;
+import com.wpp.devtools.repository.EveryDayTextRepository;
 import com.wpp.devtools.repository.TextBoardRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
@@ -41,6 +43,8 @@ public class UnAuthService {
     @Autowired
     private TextBoardRepository textBoardRepository;
 
+    @Autowired
+    private EveryDayTextRepository everyDayTextRepository;
     /**
      * 舔狗日记
      *
@@ -51,6 +55,13 @@ public class UnAuthService {
 
     }
 
+    /**
+     * 每日一文
+     * @return
+     */
+    public Object getEveryDayText() {
+        return everyDayTextRepository.findOneTextByRandom();
+    }
 
     /**
      * 同步舔狗日记
@@ -62,15 +73,18 @@ public class UnAuthService {
         headers.add("token", CommonConfig.ALAPI_TOKEN);
         for (int i = 0; i < 500; i++) {
             try {
-                String result = HttpUtil.get(UrlConfig.DOG_LICKING_DIARY_URL, null, headers);
+                String result = HttpUtil.get(UrlConfig.ENERY_DAY_TEXT, null, headers);
                 JSONObject js = JSONObject.parseObject(result);
-                String content = JSONObject.parseObject(js.getString("data")).getString("content");
-                DogText dogTextContent = dogTextRepository.findByContent(content);
-                if (null == dogTextContent) {
-                    DogText dogText = DogText.builder()
-                            .content(content)
+                JSONObject textObject = JSONObject.parseObject(js.getString("data"));
+
+                EveryDayText e = everyDayTextRepository.findByTitle(textObject.getString("title"));
+                if (null == e) {
+                    EveryDayText newe = EveryDayText.builder()
+                            .content(textObject.getString("content"))
+                            .title(textObject.getString("title"))
+                            .author(textObject.getString("author"))
                             .build();
-                    dogTextRepository.save(dogText);
+                    everyDayTextRepository.save(newe);
                 }
 //                Thread.sleep(1000);
             } catch (Exception e) {
@@ -81,29 +95,6 @@ public class UnAuthService {
                 }
             }
         }
-
-/*        try {
-            SSLUtil.turnOffSslChecking();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }*/
-/*        for (int i = 0; i < 500; i++) {
-            String result = HttpUtil.get("http://www.tiangouriji.cc/api/", null);
-//            String content = result.substring(result.indexOf("日晴") + 3);
-            JSONObject jo = JSONObject.parseObject(result);
-            String content = jo.getString("content");
-            DogText dogTextContent = dogTextRepository.findByContent(content);
-            if (null == dogTextContent) {
-                DogText dogText = DogText.builder()
-                        .content(content)
-                        .build();
-                dogTextRepository.save(dogText);
-            }
-                Thread.sleep(500);
-        }*/
-
     }
 
     /**
@@ -210,4 +201,5 @@ public class UnAuthService {
         }
         return count[0];
     }
+
 }
