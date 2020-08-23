@@ -86,7 +86,6 @@ public class UnAuthController {
 
     @ApiOperation("留言点赞")
     @PostMapping("msgBoardPraise")
-    @AccessLimit(seconds = 1, maxCount = 2)
     public Result msgBoardPraise(@RequestParam String msgId) {
         unAuthService.msgBoardPraise(msgId, request);
         return ResultVo.success();
