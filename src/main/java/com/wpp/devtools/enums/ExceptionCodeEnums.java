@@ -26,6 +26,7 @@ public enum ExceptionCodeEnums {
 
     UPLOAD_FILE_NULL(-20010, "上传文件不能为空"),
     UPLOAD_FILE_ERROR(-20011, "上传文件异常"),
+    TEXT_BOARD_PRAISE_EXISTS(-20012, "您已赞"),
 
     PARAM_NULL(-20014, "参数不能为空"),
     INSUFFICIENT_AUTHORITY(-20015, "权限不足"),

@@ -8,10 +8,12 @@ import com.wpp.devtools.config.UrlConfig;
 import com.wpp.devtools.domain.entity.DogText;
 import com.wpp.devtools.domain.entity.EveryDayText;
 import com.wpp.devtools.domain.entity.TextBoard;
+import com.wpp.devtools.domain.entity.TextBoardPraise;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.repository.DogTextRepository;
 import com.wpp.devtools.repository.EveryDayTextRepository;
+import com.wpp.devtools.repository.TextBoardPraiseRepository;
 import com.wpp.devtools.repository.TextBoardRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
@@ -45,6 +47,11 @@ public class UnAuthService {
 
     @Autowired
     private EveryDayTextRepository everyDayTextRepository;
+
+    @Autowired
+    private TextBoardPraiseRepository textBoardPraiseRepository;
+
+
     /**
      * 舔狗日记
      *
@@ -176,8 +183,33 @@ public class UnAuthService {
      * @param pageSize
      * @return
      */
-    public Object findMsgBoard(int pageNo, int pageSize) {
-        return textBoardRepository.findAllByPage(pageNo * pageSize, pageSize);
+    public Object findMsgBoard(int pageNo, int pageSize, HttpServletRequest request) {
+        String ip = CommonUtils.getIpAddr(request);
+        return textBoardRepository.findAllByPage(pageNo * pageSize, pageSize, ip);
+    }
+
+    /**
+     * 留言点赞
+     * @param msgId
+     * @param request
+     */
+    @Transactional
+    public void msgBoardPraise(String msgId, HttpServletRequest request) {
+        String ip = CommonUtils.getIpAddr(request);
+
+        //查询是否已经点赞
+        int count = textBoardPraiseRepository.findParaiseRecordCount(ip, msgId);
+        if(count > 0) {
+            throw new CustomException(ExceptionCodeEnums.TEXT_BOARD_PRAISE_EXISTS);
+        }
+        //保存点赞记录
+        TextBoardPraise textBoardPraise = TextBoardPraise.builder()
+                .textBoardId(msgId)
+                .ip(ip)
+                .build();
+        textBoardPraiseRepository.save(textBoardPraise);
+
+        textBoardRepository.addPraiseCount(msgId);
     }
 
     /**

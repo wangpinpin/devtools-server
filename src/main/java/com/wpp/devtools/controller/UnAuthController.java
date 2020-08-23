@@ -72,6 +72,7 @@ public class UnAuthController {
 
     @ApiOperation("添加留言")
     @PostMapping("addMsgBoard")
+    @AccessLimit(seconds = 5, maxCount = 1)
     public Result addMsgBoard(@RequestParam String msg) {
         unAuthService.addMsgBoard(msg, request);
         return ResultVo.success();
@@ -80,6 +81,14 @@ public class UnAuthController {
     @ApiOperation("查询留言列表")
     @GetMapping("findMsgBoard")
     public Result findMsgBoard(int pageNo, int pageSize) {
-        return ResultVo.success(unAuthService.findMsgBoard(pageNo, pageSize));
+        return ResultVo.success(unAuthService.findMsgBoard(pageNo, pageSize, request));
+    }
+
+    @ApiOperation("留言点赞")
+    @PostMapping("msgBoardPraise")
+    @AccessLimit(seconds = 5, maxCount = 1)
+    public Result msgBoardPraise(@RequestParam String msgId) {
+        unAuthService.msgBoardPraise(msgId, request);
+        return ResultVo.success();
     }
 }
