@@ -20,7 +20,7 @@ import javax.transaction.Transactional;
 public interface TextBoardRepository extends JpaRepository<TextBoard, String> {
 
 
-    @Query(value="SELECT a.content, a.praise_count praiseCount, a.create_time createTime, CASE WHEN b.id IS NULL THEN FALSE ELSE TRUE END AS praise " +
+    @Query(value="SELECT a.id, a.content, a.praise_count praiseCount, a.create_time createTime, CASE WHEN b.id IS NULL THEN FALSE ELSE TRUE END AS praise " +
             "FROM text_board a " +
             "LEFT JOIN text_board_praise b ON b.text_board_id = a.id  AND b.ip = ?3 " +
             "ORDER BY a.create_time DESC  LIMIT ?1, ?2 ", nativeQuery = true)
