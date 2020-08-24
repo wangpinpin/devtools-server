@@ -1,15 +1,14 @@
 package com.wpp.devtools.controller;
 
 import com.wpp.devtools.domain.annotation.AccessLimit;
+import com.wpp.devtools.domain.enums.TypeEnum;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.UnAuthService;
-import com.wpp.devtools.util.WXUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,8 +34,8 @@ public class UnAuthController {
     @ApiOperation("舔狗日记")
     @GetMapping("getDoglickingDiary")
     @AccessLimit(seconds = 10, maxCount = 5)
-    public Result getDoglickingDiary() {
-        return ResultVo.success(unAuthService.getDoglickingDiary());
+    public Result getDoglickingDiary(@RequestParam String typeId) {
+        return ResultVo.success(unAuthService.getDoglickingDiary(typeId));
     }
 
     @ApiOperation("每日一文")
@@ -90,4 +89,11 @@ public class UnAuthController {
         unAuthService.msgBoardPraise(msgId, request);
         return ResultVo.success();
     }
+
+    @ApiOperation("类型查询")
+    @GetMapping("findTypeList")
+    public Result findTypeList(@RequestParam TypeEnum t) {
+        return ResultVo.success(unAuthService.findTypeList(t));
+    }
+
 }

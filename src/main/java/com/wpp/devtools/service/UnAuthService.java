@@ -9,12 +9,14 @@ import com.wpp.devtools.domain.entity.DogText;
 import com.wpp.devtools.domain.entity.EveryDayText;
 import com.wpp.devtools.domain.entity.TextBoard;
 import com.wpp.devtools.domain.entity.TextBoardPraise;
+import com.wpp.devtools.domain.enums.TypeEnum;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.repository.DogTextRepository;
 import com.wpp.devtools.repository.EveryDayTextRepository;
 import com.wpp.devtools.repository.TextBoardPraiseRepository;
 import com.wpp.devtools.repository.TextBoardRepository;
+import com.wpp.devtools.repository.TypeRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.RedistUtil;
@@ -51,14 +53,17 @@ public class UnAuthService {
     @Autowired
     private TextBoardPraiseRepository textBoardPraiseRepository;
 
+    @Autowired
+    private TypeRepository typeRepository;
+
 
     /**
      * 舔狗日记
-     *
+     * @param typeId
      * @return
      */
-    public String getDoglickingDiary() {
-        return dogTextRepository.findContentByRandom();
+    public String getDoglickingDiary(String typeId) {
+        return dogTextRepository.findContentByTypeIdAndRandom(typeId);
 
     }
 
@@ -78,20 +83,21 @@ public class UnAuthService {
     public void getDoglickingDiaryListInsert() throws InterruptedException {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("token", CommonConfig.ALAPI_TOKEN);
+        MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+
         for (int i = 0; i < 500; i++) {
             try {
-                String result = HttpUtil.get(UrlConfig.ENERY_DAY_TEXT, null, headers);
-                JSONObject js = JSONObject.parseObject(result);
-                JSONObject textObject = JSONObject.parseObject(js.getString("data"));
+                String result = HttpUtil.get("https://v1.alapi.cn/api/hitokoto?format=text&type=a", param, headers);
+//                JSONObject js = JSONObject.parseObject(result);
+//                JSONObject textObject = JSONObject.parseObject(js.getString("data"));
 
-                EveryDayText e = everyDayTextRepository.findByTitle(textObject.getString("title"));
+                DogText e = dogTextRepository.findByContent(result);
                 if (null == e) {
-                    EveryDayText newe = EveryDayText.builder()
-                            .content(textObject.getString("content"))
-                            .title(textObject.getString("title"))
-                            .author(textObject.getString("author"))
+                    DogText d = DogText.builder()
+                            .content(result)
+                            .typeId("0760fbcd-e5b8-11ea-9d4b-00163e1e93a5")
                             .build();
-                    everyDayTextRepository.save(newe);
+                    dogTextRepository.save(d);
                 }
 //                Thread.sleep(1000);
             } catch (Exception e) {
@@ -234,4 +240,13 @@ public class UnAuthService {
         return count[0];
     }
 
+
+    /**
+     * 类型查询
+     * @param t
+     * @return
+     */
+    public Object findTypeList(TypeEnum t) {
+        return typeRepository.findByTypeOrderBySort(t);
+    }
 }

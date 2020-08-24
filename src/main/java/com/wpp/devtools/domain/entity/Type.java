@@ -1,6 +1,11 @@
 package com.wpp.devtools.domain.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wpp.devtools.domain.enums.TypeEnum;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -14,34 +19,25 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "type")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
 @DynamicInsert
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-public class User {
+public class Type {
 
   @Id
   @GeneratedValue(generator = "jpa-uuid")
   private String id;
-  private long subscribe;
-  private String openid;
-  private String nickname;
-  private long sex;
-  private String city;
-  private String country;
-  private String headimgurl;
-  private java.sql.Timestamp subscribeTime;
-  private String unionid;
-  private String remark;
-  private long groupid;
-  private String tagidList;
-  private String subscribeScene;
-  private String qrScene;
-  private String qrSceneStr;
+  private String name;
+  @Enumerated(EnumType.STRING)
+  private TypeEnum type;
+  private long sort;
+  @JsonIgnore
   private java.sql.Timestamp createTime;
+  @JsonIgnore
   private java.sql.Timestamp updateTime;
 
 
