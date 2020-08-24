@@ -16,6 +16,4 @@
 
 
 
-域名： https://wangpinpin.com/ （带宽很小）
-
-备用： http://139.196.199.233/ （速度快点）
+域名： https://wangpinpin.com/
