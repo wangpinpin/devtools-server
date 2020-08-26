@@ -257,17 +257,13 @@ public class UnAuthService {
     }
 
     /**
-     * 根据关键字查询歌曲
-     *
-     * @param keyword
+     * 跨域接口
+     * @param url
      * @return
      */
-    public Object findSongInfoByKeyWord(String keyword) {
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("keyword", keyword);
-
-        String result = HttpUtil.get(MessageFormat.format(UrlConfig.FIND_SONG_INFO_BY_KEYWORD_URL, keyword), params);
-        return JSONObject.parseObject(result);
+    public Object crossDomain(String url) {
+        String result = HttpUtil.post(url, null);
+        JSONObject js = JSONObject.parseObject(result);
+        return js;
     }
 }
