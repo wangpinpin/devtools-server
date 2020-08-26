@@ -262,7 +262,7 @@ public class UnAuthService {
      * @return
      */
     public Object crossDomain(String url) {
-        String result = HttpUtil.post(url, null);
+        String result = HttpUtil.get(url, null);
         JSONObject js = JSONObject.parseObject(result);
         return js;
     }
