@@ -59,6 +59,7 @@ public class UnAuthService {
 
     /**
      * 舔狗日记
+     *
      * @param typeId
      * @return
      */
@@ -69,6 +70,7 @@ public class UnAuthService {
 
     /**
      * 每日一文
+     *
      * @return
      */
     public Object getEveryDayText() {
@@ -87,7 +89,8 @@ public class UnAuthService {
 
         for (int i = 0; i < 500; i++) {
             try {
-                String result = HttpUtil.get("https://v1.alapi.cn/api/hitokoto?format=text&type=a", param, headers);
+                String result = HttpUtil
+                        .get("https://v1.alapi.cn/api/hitokoto?format=text&type=a", param, headers);
 //                JSONObject js = JSONObject.parseObject(result);
 //                JSONObject textObject = JSONObject.parseObject(js.getString("data"));
 
@@ -196,6 +199,7 @@ public class UnAuthService {
 
     /**
      * 留言点赞
+     *
      * @param msgId
      * @param request
      */
@@ -205,7 +209,7 @@ public class UnAuthService {
 
         //查询是否已经点赞
         int count = textBoardPraiseRepository.findParaiseRecordCount(ip, msgId);
-        if(count > 0) {
+        if (count > 0) {
             throw new CustomException(ExceptionCodeEnums.TEXT_BOARD_PRAISE_EXISTS);
         }
         //保存点赞记录
@@ -220,12 +224,13 @@ public class UnAuthService {
 
     /**
      * 添加舔狗日记
+     *
      * @param texts
      * @return
      */
     public Object addGogText(List<String> texts) {
         final int[] count = {0};
-        if(null != texts && texts.size() > 0) {
+        if (null != texts && texts.size() > 0) {
             texts.forEach(e -> {
                 DogText dogTextContent = dogTextRepository.findByContent(e);
                 if (null == dogTextContent) {
@@ -243,10 +248,26 @@ public class UnAuthService {
 
     /**
      * 类型查询
+     *
      * @param t
      * @return
      */
     public Object findTypeList(TypeEnum t) {
         return typeRepository.findByTypeOrderBySort(t);
+    }
+
+    /**
+     * 根据关键字查询歌曲
+     *
+     * @param keyword
+     * @return
+     */
+    public Object findSongInfoByKeyWord(String keyword) {
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("keyword", keyword);
+
+        String result = HttpUtil.get(MessageFormat.format(UrlConfig.FIND_SONG_INFO_BY_KEYWORD_URL, keyword), params);
+        return JSONObject.parseObject(result);
     }
 }

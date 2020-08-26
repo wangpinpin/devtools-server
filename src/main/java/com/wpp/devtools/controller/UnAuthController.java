@@ -96,4 +96,9 @@ public class UnAuthController {
         return ResultVo.success(unAuthService.findTypeList(t));
     }
 
+    @ApiOperation("根据关键字查询歌曲")
+    @GetMapping("findSongInfoByKeyWord")
+    public Result findTypeList(@RequestParam String keyword) {
+        return ResultVo.success(unAuthService.findSongInfoByKeyWord(keyword));
+    }
 }

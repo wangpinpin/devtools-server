@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: dev
   datasource:
     url: jdbc:mysql://XXXX:3306/devtools?useUnicode=true&characterEncoding=UTF-8&serverTimezone=CTT&zeroDateTimeBehavior=convertToNull&useSSL=false
     username: XXX
@@ -25,6 +25,8 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+server:
+  port: 8001
 BAIDU:
   APP_ID: XXXX
   API_KEY: XXXX
