@@ -1,6 +1,5 @@
 package com.wpp.devtools.controller;
 
-import com.wpp.devtools.domain.bo.ImgClearWatermarkBo;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.DevtoolsService;
@@ -11,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/devTools/")
@@ -41,8 +37,8 @@ public class DevtoolsController {
 
     @ApiOperation("图片去水印")
     @PostMapping("imgClearWatermark")
-    public Result imgClearWatermark(@Valid @RequestBody ImgClearWatermarkBo i) {
-        return ResultVo.success(devtoolsService.imgClearWatermark(i));
+    public Result imgClearWatermark(@RequestParam MultipartFile file, @RequestParam String backgroundColor, @RequestParam String watermarkColor, @RequestParam int precision) {
+        return ResultVo.success(devtoolsService.imgClearWatermark(file, backgroundColor, watermarkColor, precision));
     }
 
 }

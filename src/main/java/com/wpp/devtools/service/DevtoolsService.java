@@ -1,19 +1,16 @@
 package com.wpp.devtools.service;
 
 import cn.jiguang.common.utils.Base64;
-import com.wpp.devtools.domain.bo.ImgClearWatermarkBo;
 import com.wpp.devtools.util.CommonUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Arrays;
 
 @Service
 public class DevtoolsService {
@@ -25,7 +22,9 @@ public class DevtoolsService {
      * @return
      */
     public Object imgToBase64(MultipartFile file) {
-        return "data:image/png;base64," + CommonUtils.toBaseImg64(file);
+        String originalFilename = file.getOriginalFilename();
+        String type = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+        return "data:image/" + type + ";base64," + CommonUtils.toBaseImg64(file);
     }
 
     /**
@@ -40,21 +39,27 @@ public class DevtoolsService {
 
     }
 
+
     /**
      * 图片去水印
      *
-     * @param iw
+     * @param file
+     * @param backgroundColor
+     * @param backgroundColor
      * @return
      */
-    public Object imgClearWatermark(ImgClearWatermarkBo iw) {
+    public Object imgClearWatermark(MultipartFile file, String backgroundColor, String watermarkColor, int precision) {
         BufferedImage bi = null;
         try {
-            bi = ImageIO.read(iw.getFile().getInputStream());
+            bi = ImageIO.read(file.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
         //背景值
-        Color wColor = new Color(iw.getBackgroundColorR(), iw.getBackgroundColorG(), iw.getBackgroundColorB());
+        int[] bgC = Arrays.asList(backgroundColor.replace(" ", "").split(",")).stream().mapToInt(Integer::parseInt).toArray();
+        int[] wmC = Arrays.asList(watermarkColor.replace(" ", "").split(",")).stream().mapToInt(Integer::parseInt).toArray();
+
+        Color wColor = new Color(bgC[0], bgC[1], bgC[2]);
         for (int i = 0; i < bi.getWidth(); i++) {
             for (int j = 0; j < bi.getHeight(); j++) {
                 int color = bi.getRGB(i, j);
@@ -63,14 +68,14 @@ public class DevtoolsService {
                 int greed = oriColor.getGreen();
                 int blue = oriColor.getBlue();
                 //替换颜色
-                if ((red > iw.getWatermarkColorR() - 10 && red < iw.getWatermarkColorR() + 10) &&
-                        (greed > iw.getWatermarkColorG() - 10 && greed < iw.getWatermarkColorG() + 10) &&
-                        (blue > iw.getWatermarkColorB() - 10 && blue < iw.getWatermarkColorB() + 10)) {
+                if ((red > wmC[0] - precision && red < wmC[0] + precision) &&
+                        (greed > wmC[1] - precision && greed < wmC[1] + precision) &&
+                        (blue > wmC[2] - precision && blue < wmC[2] + precision)) {
                     bi.setRGB(i, j, wColor.getRGB());
                 }
             }
         }
-        String originalFilename = iw.getFile().getOriginalFilename();
+        String originalFilename = file.getOriginalFilename();
         String type = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -80,8 +85,13 @@ public class DevtoolsService {
             e.printStackTrace();
         }
         char[] base64 = Base64.encode(stream.toByteArray());
-
-        bi.flush();
+        try {
+            stream.close();
+            stream.flush();
+            bi.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return base64;
     }
 
