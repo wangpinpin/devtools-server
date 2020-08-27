@@ -36,16 +36,14 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/favicon.ico")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**",
-                        "/swagger-ui.html/**")
-                .excludePathPatterns(Arrays.asList("/wx/**"));
+                        "/swagger-ui.html/**");
 
         registry.addInterceptor(jwtInterceptor())
                 .addPathPatterns("/auth/**")
                 .excludePathPatterns("/favicon.ico")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**",
                         "/swagger-ui.html/**")
-                .excludePathPatterns(Arrays.asList("/unAuth/**"))
-                .excludePathPatterns(Arrays.asList("/wx/**"));
+                .excludePathPatterns(Arrays.asList("/unAuth/**", "/wx/**", "/devTools/**"));
 
 
     }
