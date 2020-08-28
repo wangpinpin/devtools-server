@@ -103,12 +103,6 @@
       <version>1.4.7</version>
     </dependency>
 
-    <!--jpush-->
-    <dependency>
-      <groupId>cn.jpush.api</groupId>
-      <artifactId>jpush-client</artifactId>
-      <version>3.3.10</version>
-    </dependency>
 
     <dependency>
       <groupId>com.sun.mail</groupId>

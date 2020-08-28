@@ -28,6 +28,7 @@ public class TextBoard {
   private String id;
   private String ip;
   private String content;
+  private String parentId;
   private Integer praiseCount;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;

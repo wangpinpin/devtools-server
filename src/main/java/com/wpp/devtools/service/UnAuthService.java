@@ -21,7 +21,11 @@ import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.RedistUtil;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -178,9 +182,13 @@ public class UnAuthService {
      * @return
      */
     @Transactional
-    public void addMsgBoard(String msg, HttpServletRequest request) {
+    public void addMsgBoard(String msg, String msgId, HttpServletRequest request) {
+        if(StringUtils.isEmpty(msgId)) {
+            msgId = "0";
+        }
         TextBoard textBoard = TextBoard.builder()
                 .ip(CommonUtils.getIpAddr(request))
+                .parentId(msgId)
                 .content(msg).build();
         textBoardRepository.save(textBoard);
     }
@@ -194,7 +202,27 @@ public class UnAuthService {
      */
     public Object findMsgBoard(int pageNo, int pageSize, HttpServletRequest request) {
         String ip = CommonUtils.getIpAddr(request);
-        return textBoardRepository.findAllByPage(pageNo * pageSize, pageSize, ip);
+
+        //查询留言
+        List<Map<String, Object>> list = textBoardRepository.findAllByPage(pageNo * pageSize, pageSize, ip);
+        list = CommonUtils.toCamelCase(list);
+        List<String> ids = list.stream().map(e -> e.get("id").toString()).collect(Collectors.toList());
+        //查询所有回复
+        List<Map<String, Object>> replyList = textBoardRepository.findAllByParentIds(ids, ip);
+
+        //分组
+        Map<String, List<Map<String, Object>>> map = replyList.stream()
+                .collect(Collectors.groupingBy(e -> e.get("parentId").toString()));
+
+        List<Map<String, Object>> finalList = list;
+        map.forEach((k, v) -> {
+            finalList.forEach(e -> {
+                if(e.get("id").toString().equals(k)) {
+                    e.put("reply", v);
+                }
+            });
+        });
+        return  finalList;
     }
 
     /**

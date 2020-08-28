@@ -20,11 +20,19 @@ import javax.transaction.Transactional;
 public interface TextBoardRepository extends JpaRepository<TextBoard, String> {
 
 
-    @Query(value="SELECT a.id, a.content, a.praise_count praiseCount, a.create_time createTime, CASE WHEN b.id IS NULL THEN FALSE ELSE TRUE END AS praise " +
+    @Query(value="SELECT a.id, a.content, a.praise_count, a.create_time, CASE WHEN b.id IS NULL THEN FALSE ELSE TRUE END AS praise " +
             "FROM text_board a " +
             "LEFT JOIN text_board_praise b ON b.text_board_id = a.id  AND b.ip = ?3 " +
+            "WHERE a.parent_id = 0 " +
             "ORDER BY a.create_time DESC  LIMIT ?1, ?2 ", nativeQuery = true)
     List<Map<String, Object>> findAllByPage(int pageNo, int pageSize, String ip);
+
+    @Query(value="SELECT a.id, a.content, a.parent_id parentId, a.praise_count praiseCount, a.create_time createTime, CASE WHEN b.id IS NULL THEN FALSE ELSE TRUE END AS praise " +
+            "FROM text_board a " +
+            "LEFT JOIN text_board_praise b ON b.text_board_id = a.id  AND b.ip = ?2 " +
+            "WHERE a.parent_id IN ?1 " +
+            "ORDER BY a.create_time DESC", nativeQuery = true)
+    List<Map<String, Object>> findAllByParentIds(List<String> parentIds, String ip);
 
     @Transactional
     @Modifying

@@ -1,16 +1,15 @@
 package com.wpp.devtools.service;
 
-import cn.jiguang.common.utils.Base64;
+import com.sun.xml.internal.messaging.saaj.util.Base64;
 import com.wpp.devtools.util.CommonUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import javax.imageio.ImageIO;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class DevtoolsService {
@@ -84,7 +83,7 @@ public class DevtoolsService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        char[] base64 = Base64.encode(stream.toByteArray());
+        byte[] base64 = Base64.encode(stream.toByteArray());
         try {
             stream.close();
             stream.flush();

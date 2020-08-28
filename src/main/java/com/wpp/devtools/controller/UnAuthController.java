@@ -72,8 +72,8 @@ public class UnAuthController {
     @ApiOperation("添加留言")
     @PostMapping("addMsgBoard")
     @AccessLimit(seconds = 5, maxCount = 1)
-    public Result addMsgBoard(@RequestParam String msg) {
-        unAuthService.addMsgBoard(msg, request);
+    public Result addMsgBoard(@RequestParam String msg, String msgId) {
+        unAuthService.addMsgBoard(msg, msgId, request);
         return ResultVo.success();
     }
 
