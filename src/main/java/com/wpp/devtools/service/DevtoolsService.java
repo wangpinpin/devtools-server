@@ -1,6 +1,5 @@
 package com.wpp.devtools.service;
 
-import com.sun.xml.internal.messaging.saaj.util.Base64;
 import com.wpp.devtools.util.CommonUtils;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -83,7 +82,7 @@ public class DevtoolsService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        byte[] base64 = Base64.encode(stream.toByteArray());
+//        byte[] base64 = Base64.encode(stream.toByteArray());
         try {
             stream.close();
             stream.flush();
@@ -91,7 +90,7 @@ public class DevtoolsService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return base64;
+        return null;
     }
 
 }
