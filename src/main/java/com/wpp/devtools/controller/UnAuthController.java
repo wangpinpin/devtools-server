@@ -102,5 +102,12 @@ public class UnAuthController {
         return ResultVo.success(unAuthService.crossDomain(url));
     }
 
+    @ApiOperation("发送验证码")
+    @PostMapping("sendCode")
+    public Result sendCode(@RequestParam String email) {
+        unAuthService.sendCode(email);
+        return ResultVo.success();
+    }
+
 
 }

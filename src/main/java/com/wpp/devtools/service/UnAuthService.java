@@ -298,4 +298,16 @@ public class UnAuthService {
         JSONObject js = JSONObject.parseObject(result);
         return js;
     }
+
+    /**
+     * 发送验证码
+     * @param email
+     * @return
+     */
+    public void sendCode(String email) {
+        //限制每天10次
+
+        //开始发送
+//        VerificationCode
+    }
 }
