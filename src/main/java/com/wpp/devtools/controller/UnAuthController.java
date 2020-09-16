@@ -5,6 +5,7 @@ import com.wpp.devtools.domain.enums.TypeEnum;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.UnAuthService;
+import com.wpp.devtools.util.EmailUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -63,7 +64,6 @@ public class UnAuthController {
         return ResultVo.success();
     }
 
-    @ApiOperation("添加舔狗日记")
     @PostMapping("addGogText")
     public Result addGogText(@RequestBody List<String> texts) {
         return ResultVo.success(unAuthService.addGogText(texts));

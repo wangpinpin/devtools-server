@@ -260,10 +260,14 @@ public class UnAuthService {
         final int[] count = {0};
         if (null != texts && texts.size() > 0) {
             texts.forEach(e -> {
+                if(StringUtils.isEmpty(e)) {
+                    return;
+                }
                 DogText dogTextContent = dogTextRepository.findByContent(e);
                 if (null == dogTextContent) {
                     DogText dogText = DogText.builder()
                             .content(e)
+                            .typeId("b1386080-e5b7-11ea-9d4b-00163e1e93a5")
                             .build();
                     dogTextRepository.save(dogText);
                     count[0]++;

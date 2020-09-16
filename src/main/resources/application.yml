@@ -34,3 +34,8 @@ BAIDU:
 WX:
   APPID: XXX
   SECRET: XXX
+Email:
+  from: XXX
+  host: XXX
+  port: XXX
+  password: XXX

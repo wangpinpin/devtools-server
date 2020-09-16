@@ -23,11 +23,9 @@ public enum ExceptionCodeEnums {
     HTTP_REQUEST_ERROR(-20007, "接口请求异常"),
     HTTP_REQUEST_FREQUENTLY(-20008, "请求太频繁"),
     GET_IP_ERROR(-20009, "获取IP异常"),
-
     UPLOAD_FILE_NULL(-20010, "上传文件不能为空"),
     UPLOAD_FILE_ERROR(-20011, "上传文件异常"),
     TEXT_BOARD_PRAISE_EXISTS(-20012, "您已赞"),
-
     PARAM_NULL(-20014, "参数不能为空"),
     INSUFFICIENT_AUTHORITY(-20015, "权限不足"),
     TIME_ERROR(-20016, "时间解析异常"),
@@ -37,6 +35,7 @@ public enum ExceptionCodeEnums {
     PASSWORD_UNQUALIFIED(-20022, "密码必须包含大小写字母、数字、特殊符号的8位以上组合"),
     STREAM_ERROR(-20023, "流异常"),
     WX_HTTP_REQUEST_ERROR(-200024, "微信接口请求异常"),
+    EMAIL_SEND_ERROR(-200025, "邮件发送异常"),
 
     ;
 
