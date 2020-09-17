@@ -8,8 +8,7 @@ package com.wpp.devtools.config;
  **/
 public class CommonConfig {
 
-    public final static String PASSWORD_VALIDATE = "^(?=.*[a-zA-Z])(?=.*[1-9])(?=.*[\\W]).{8,}$";
-    public final static String PASSWORD_DEFAULT = "123456";
+    public final static String PASSWORD_VALIDATE = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$";
 
     //https://alapi.net/ token
     public final static String ALAPI_TOKEN = "yKxNvBtSS5UyrjhzjFWl";

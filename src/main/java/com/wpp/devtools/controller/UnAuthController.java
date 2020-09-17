@@ -1,6 +1,9 @@
 package com.wpp.devtools.controller;
 
 import com.wpp.devtools.domain.annotation.AccessLimit;
+import com.wpp.devtools.domain.bo.ForgetPasswordBo;
+import com.wpp.devtools.domain.bo.LoginBo;
+import com.wpp.devtools.domain.bo.RegisterBo;
 import com.wpp.devtools.domain.enums.TypeEnum;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
@@ -10,6 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,14 +46,13 @@ public class UnAuthController {
 
     @ApiOperation("每日一文")
     @GetMapping("getEveryDayText")
-    @AccessLimit(seconds = 10, maxCount = 3)
+    @AccessLimit(seconds = 10, maxCount = 5)
     public Result getEveryDayText() {
         return ResultVo.success(unAuthService.getEveryDayText());
     }
 
     @ApiOperation("图片转文字")
     @PostMapping("imgToText")
-    @AccessLimit(seconds = 10, maxCount = 3)
     public Result imgToText(MultipartFile file, String languageType) {
         return ResultVo.success(unAuthService.imgToText(file, languageType));
     }
@@ -71,7 +75,7 @@ public class UnAuthController {
 
     @ApiOperation("添加留言")
     @PostMapping("addMsgBoard")
-    @AccessLimit(seconds = 5, maxCount = 1)
+    @AccessLimit(seconds = 5, maxCount = 2)
     public Result addMsgBoard(@RequestParam String msg, String msgId) {
         unAuthService.addMsgBoard(msg, msgId, request);
         return ResultVo.success();
@@ -102,12 +106,40 @@ public class UnAuthController {
         return ResultVo.success(unAuthService.crossDomain(url));
     }
 
+    @ApiOperation("验证邮箱是否存在")
+    @PostMapping("emailIsExist")
+    public Result emailIsExist(@RequestParam String email) {
+        unAuthService.emailIsExist(email);
+        return ResultVo.success();
+    }
+
     @ApiOperation("发送验证码")
     @PostMapping("sendCode")
+    @AccessLimit(seconds = 60, maxCount = 3)
     public Result sendCode(@RequestParam String email) {
         unAuthService.sendCode(email);
         return ResultVo.success();
     }
 
+    @ApiOperation("注册")
+    @PostMapping("register")
+    public Result register(@Valid @RequestBody RegisterBo r) {
+        unAuthService.register(r);
+        return ResultVo.success();
+    }
+
+    @ApiOperation("登录")
+    @PostMapping("login")
+    @AccessLimit(seconds = 60, maxCount = 5)
+    public Result login(@Valid @RequestBody LoginBo l) {
+        return ResultVo.success(unAuthService.login(l));
+    }
+
+    @ApiOperation("忘记密码")
+    @PostMapping("forgetPassword")
+    public Result forgetPassword(@Valid @RequestBody ForgetPasswordBo f) {
+        unAuthService.forgetPassword(f);
+        return ResultVo.success();
+    }
 
 }

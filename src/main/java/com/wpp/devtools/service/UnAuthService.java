@@ -1,28 +1,40 @@
 package com.wpp.devtools.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wpp.devtools.config.BaiduConfig;
 import com.wpp.devtools.config.CommonConfig;
 import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.config.UrlConfig;
+import com.wpp.devtools.domain.bo.ForgetPasswordBo;
+import com.wpp.devtools.domain.bo.LoginBo;
+import com.wpp.devtools.domain.bo.RegisterBo;
 import com.wpp.devtools.domain.entity.DogText;
-import com.wpp.devtools.domain.entity.EveryDayText;
 import com.wpp.devtools.domain.entity.TextBoard;
 import com.wpp.devtools.domain.entity.TextBoardPraise;
+import com.wpp.devtools.domain.entity.User;
+import com.wpp.devtools.domain.entity.VerificationCode;
 import com.wpp.devtools.domain.enums.TypeEnum;
+import com.wpp.devtools.domain.vo.UserVo;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
+import com.wpp.devtools.enums.UserCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.repository.DogTextRepository;
 import com.wpp.devtools.repository.EveryDayTextRepository;
 import com.wpp.devtools.repository.TextBoardPraiseRepository;
 import com.wpp.devtools.repository.TextBoardRepository;
 import com.wpp.devtools.repository.TypeRepository;
+import com.wpp.devtools.repository.UserRepository;
+import com.wpp.devtools.repository.VerificationCodeRepository;
 import com.wpp.devtools.util.CommonUtils;
+import com.wpp.devtools.util.EmailUtil;
 import com.wpp.devtools.util.HttpUtil;
+import com.wpp.devtools.util.JWTUtil;
+import com.wpp.devtools.util.MD5Util;
 import com.wpp.devtools.util.RedistUtil;
+import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,6 +71,18 @@ public class UnAuthService {
 
     @Autowired
     private TypeRepository typeRepository;
+
+    @Autowired
+    private VerificationCodeRepository verificationCodeRepository;
+
+    @Autowired
+    private EmailUtil emailUtil;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
 
     /**
@@ -183,7 +207,7 @@ public class UnAuthService {
      */
     @Transactional
     public void addMsgBoard(String msg, String msgId, HttpServletRequest request) {
-        if(StringUtils.isEmpty(msgId)) {
+        if (StringUtils.isEmpty(msgId)) {
             msgId = "0";
         }
         TextBoard textBoard = TextBoard.builder()
@@ -204,9 +228,11 @@ public class UnAuthService {
         String ip = CommonUtils.getIpAddr(request);
 
         //查询留言
-        List<Map<String, Object>> list = textBoardRepository.findAllByPage(pageNo * pageSize, pageSize, ip);
+        List<Map<String, Object>> list = textBoardRepository
+                .findAllByPage(pageNo * pageSize, pageSize, ip);
         list = CommonUtils.toCamelCase(list);
-        List<String> ids = list.stream().map(e -> e.get("id").toString()).collect(Collectors.toList());
+        List<String> ids = list.stream().map(e -> e.get("id").toString())
+                .collect(Collectors.toList());
         //查询所有回复
         List<Map<String, Object>> replyList = textBoardRepository.findAllByParentIds(ids, ip);
 
@@ -217,12 +243,12 @@ public class UnAuthService {
         List<Map<String, Object>> finalList = list;
         map.forEach((k, v) -> {
             finalList.forEach(e -> {
-                if(e.get("id").toString().equals(k)) {
+                if (e.get("id").toString().equals(k)) {
                     e.put("reply", v);
                 }
             });
         });
-        return  finalList;
+        return finalList;
     }
 
     /**
@@ -260,7 +286,7 @@ public class UnAuthService {
         final int[] count = {0};
         if (null != texts && texts.size() > 0) {
             texts.forEach(e -> {
-                if(StringUtils.isEmpty(e)) {
+                if (StringUtils.isEmpty(e)) {
                     return;
                 }
                 DogText dogTextContent = dogTextRepository.findByContent(e);
@@ -290,24 +316,137 @@ public class UnAuthService {
 
     /**
      * 跨域接口
+     *
      * @param url
      * @return
      */
     public Object crossDomain(String url) {
         String result = HttpUtil.get(url, null);
-        JSONObject js = JSONObject.parseObject(result);
-        return js;
+        return JSONObject.parseObject(result);
+    }
+
+
+    /**
+     * 验证邮箱是否存在
+     * @param email
+     */
+    public boolean emailIsExist(String email) {
+        User u = userRepository.findByEmail(email);
+        if(null != u) {
+            return true;
+        }
+        return false;
     }
 
     /**
      * 发送验证码
+     *
      * @param email
      * @return
      */
+    @Transactional
     public void sendCode(String email) {
-        //限制每天10次
+
+        //限制24小时10次
+        String dayCountString = redistUtil.getString("DAY" + email);
+        int dayCount = null == dayCountString ? 0 : Integer.parseInt(dayCountString);
+        if (dayCount >= 10) {
+            throw new CustomException(UserCodeEnums.DAY_MAX_SEND_EMAIL_SEND_COUNT);
+        }
+        if (dayCount == 0) {
+            redistUtil.incr("DAY" + email, 3600 * 24);
+        } else {
+            redistUtil.incr("DAY" + email);
+        }
+
+        //每分钟一次
+        String minuteCountString = redistUtil.getString("MINUTE" + email);
+        int minuteCount = null == minuteCountString ? 0 : Integer.parseInt(minuteCountString);
+        if (minuteCount > 0) {
+            throw new CustomException(UserCodeEnums.MINUTE_MAX_SEND_EMAIL_SEND_COUNT);
+        } else {
+            redistUtil.incr("MINUTE" + email, 58);
+        }
 
         //开始发送
-//        VerificationCode
+        //过期时间5分钟
+        String code = CommonUtils.getRandomCodeByCount(4);
+        VerificationCode vc = VerificationCode.builder().code(code).email(email)
+                .deadline(new Timestamp(new Date().getTime() + 5 * 60 * 1000)).build();
+        verificationCodeRepository.save(vc);
+
+        //发送邮件
+        emailUtil.sendMail(email, "小破站 | 验证码", emailUtil.sendCodeHtml(email, code));
+    }
+
+    /**
+     * 注册
+     *
+     * @param r
+     */
+    public void register(RegisterBo r) {
+
+        if(emailIsExist(r.getEmail())) {
+            throw new CustomException(UserCodeEnums.EMAIL_EXIST);
+        }
+
+        //验证邮件验证码
+        validEmailAndCode(r.getEmail(), r.getCode().toUpperCase());
+
+        //注册
+        User user = User.builder().email(r.getEmail())
+                .password(MD5Util.md5Encrypt32Upper(r.getPassword())).build();
+        userRepository.save(user);
+    }
+
+    /**
+     * 登录
+     * @param l
+     * @return
+     */
+    public Object login(LoginBo l) {
+        User user = userRepository.findByEmail(l.getEmail());
+
+        if(!emailIsExist(user.getEmail())) {
+            throw new CustomException(UserCodeEnums.EMAIL_NOT_EXIST);
+        }
+        if(!user.getPassword().equals(MD5Util.md5Encrypt32Upper(l.getPassword()))) {
+            throw new CustomException(UserCodeEnums.USER_PSW_ERROR);
+        }
+
+        UserVo u = JSONObject.parseObject(JSON.toJSONString(user), UserVo.class);
+        u.setToken(jwtUtil.createJWT(user.getId()));
+        return u;
+    }
+
+    /**
+     * 忘记密码
+     * @param f
+     * @return
+     */
+    public void forgetPassword(ForgetPasswordBo f) {
+
+        //验证邮件验证码
+        validEmailAndCode(f.getEmail(), f.getCode().toUpperCase());
+
+        User user = userRepository.findByEmail(f.getEmail());
+        user.setPassword(MD5Util.md5Encrypt32Upper(f.getPassword()));
+        userRepository.save(user);
+    }
+
+    /**
+     * 验证邮件验证码
+     * @param email
+     * @param code
+     */
+    private void validEmailAndCode(String email, String code) {
+        VerificationCode vc = verificationCodeRepository
+                .findByEmailAndCode(email, code);
+        if (null == vc) {
+            throw new CustomException(UserCodeEnums.VERIFICATION_CODE_ERROR);
+        }
+        if (vc.getDeadline().before(new Date())) {
+            throw new CustomException(UserCodeEnums.VERIFICATION_CODE_INVALID);
+        }
     }
 }

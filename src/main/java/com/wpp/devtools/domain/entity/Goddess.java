@@ -15,22 +15,22 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "goddess")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
 @DynamicInsert
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-public class User {
+public class Goddess {
 
   @Id
   @GeneratedValue(generator = "jpa-uuid")
   private String id;
-  private Integer uid;
+  private String userId;
   private String nickName;
   private String email;
-  private String password;
+  private String activityId;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;
 

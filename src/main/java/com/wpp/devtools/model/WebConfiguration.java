@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * @program: volvo-sever
+ * @program: devtools-server
  * @description:
  * @author: wpp
  * @create: 2020-07-06
@@ -39,7 +39,7 @@ public class WebConfiguration implements WebMvcConfigurer {
                         "/swagger-ui.html/**");
 
         registry.addInterceptor(jwtInterceptor())
-                .addPathPatterns("/auth/**")
+                .addPathPatterns("/user/**")
                 .excludePathPatterns("/favicon.ico")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**",
                         "/swagger-ui.html/**")

@@ -1,14 +1,10 @@
 package com.wpp.devtools.service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wpp.devtools.config.WXKeyconfig;
 import com.wpp.devtools.config.WXconfig;
-import com.wpp.devtools.domain.entity.Menu;
-import com.wpp.devtools.domain.entity.User;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
-import com.wpp.devtools.repository.MenuRepository;
 import com.wpp.devtools.repository.UserRepository;
 import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.RedistUtil;
@@ -16,9 +12,7 @@ import com.wpp.devtools.util.WXMessageUtil;
 import com.wpp.devtools.util.XmlUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -40,9 +34,6 @@ public class WXService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
 
     /**
      * 获取access_token
@@ -129,16 +120,6 @@ public class WXService {
     }
 
 
-    /**
-     * 创建菜单
-     */
-    public void createMenu() {
-        List<Menu> list = menuRepository.findAll();
-        JSONObject jo = new JSONObject();
-        jo.put("button",list);
-        String result = HttpUtil.post(MessageFormat.format(WXconfig.WX_CREATE_MENU_URL, getAccessToken()), null);
-        isSucessWXApiByResult(result);
-    }
 
     public void isSucessWXApiByResult(String result) {
         JSONObject jo = JSONObject.parseObject(result);

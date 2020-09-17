@@ -3,7 +3,7 @@ package com.wpp.devtools.domain.enums;
 import lombok.Getter;
 
 /**
- * @program: volvo-sever
+ * @program: devtools-server
  * @description:
  * @author: wpp
  * @create: 2020-08-24

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
- * @program: volvo-sever
+ * @program: devtools-server
  * @description:
  * @author: wpp
  * @create: 2020-08-21

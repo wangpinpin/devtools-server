@@ -34,8 +34,11 @@ BAIDU:
 WX:
   APPID: XXX
   SECRET: XXX
-Email:
-  from: XXX
-  host: XXX
-  port: XXX
-  password: XXX
+EMAIL:
+  FROM: XXX
+  HOST: XXX
+  PORT: XXX
+  PASSWORD: XXX
+JWT:
+  JWT_CLIENTID: XXX
+  JWT_BASE64SECRET: XXX

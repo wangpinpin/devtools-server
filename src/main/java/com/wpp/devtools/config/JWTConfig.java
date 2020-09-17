@@ -1,20 +1,27 @@
 package com.wpp.devtools.config;
 
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 /**
- * @program: volvo-sever
+ * @program: devtools-server
  * @description:
  * @author: wpp
  * @create: 2020-07-06
  **/
+@Component
+@Data
 public class JWTConfig {
 
-    public final static String JWT_CLIENTID = "098f6bcd4621d373cade4e832627b4f6";
+    @Value("${JWT.JWT_CLIENTID}")
+    private String jwtClientid;
 
-    public final static String JWT_BASE64SECRET = "MDk4ZjZiY2Q0NjIxZDM3M2NhZGU0ZTgzMjYyN2I0ZjY=";
+    @Value("${JWT.JWT_BASE64SECRET}")
+    private String jwtBase64secret;
 
-    public final static String JWT_NAME = "Volvo";
+    public final static String JWT_NAME = "xiaopozhan";
 
-    //    public final static Integer JWT_EXPIRESSECOND = 604800; // 7天
     public final static long JWT_EXPIRESSECOND = 9999999999L; //永久
 
     public final static String JWT_BEARER = "Bearer ";

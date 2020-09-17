@@ -15,27 +15,32 @@ import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
- * @program: volvo-sever
+ * @program: devtools-server
  * @description:
  * @author: wpp
  * @create: 2020-07-06
  **/
 @Slf4j
+@Component
 public class JWTUtil {
 
+    @Autowired
+    private JWTConfig jwtConfig;
     /**
      * 解析jwt
      */
-    public static JSONObject parseJWT(String token) {
+    public JSONObject parseJWT(String token) {
         if (null == token || !token.startsWith(JWTConfig.JWT_BEARER)) {
             throw new CustomException(ExceptionCodeEnums.JWT_VALID_ERROR);
         }
         token = token.substring(7);
         try {
             Claims claims = Jwts.parser()
-                    .setSigningKey(DatatypeConverter.parseBase64Binary(JWTConfig.JWT_BASE64SECRET))
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(jwtConfig.getJwtBase64secret()))
                     .parseClaimsJws(token).getBody();
             if (null == claims) {
                 throw new CustomException(ExceptionCodeEnums.JWT_VALID_ERROR);
@@ -56,7 +61,7 @@ public class JWTUtil {
      * @param expMillis 秒
      * @return
      */
-    public static String createJWT(String userId, long expMillis) {
+    public String createJWT(String userId, long expMillis) {
         if (null == userId) {
             throw new CustomException(ExceptionCodeEnums.ID_NULL);
         }
@@ -66,14 +71,14 @@ public class JWTUtil {
         Date now = new Date(nowMillis);
 
         //生成签名密钥
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(JWTConfig.JWT_BASE64SECRET);
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(jwtConfig.getJwtBase64secret());
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         //添加构成JWT的参数
         JwtBuilder builder = Jwts.builder().setHeaderParam("typ", "JWT")
                 .claim(JWTConfig.JWT_USER_ID_KEY, userId)
                 .setIssuer(JWTConfig.JWT_NAME)
-                .setAudience(JWTConfig.JWT_CLIENTID)
+                .setAudience(jwtConfig.getJwtClientid())
                 .signWith(signatureAlgorithm, signingKey);
 
         //添加Token过期时间
@@ -91,13 +96,9 @@ public class JWTUtil {
      * @param userId
      * @return
      */
-    public static String createJWT(String userId) {
+    public String createJWT(String userId) {
         long expMillis = JWTConfig.JWT_EXPIRESSECOND;
         return createJWT(userId, expMillis);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(createJWT("67829ecb-c5a0-11ea-8431-00163e009fe8"));
     }
 
 }

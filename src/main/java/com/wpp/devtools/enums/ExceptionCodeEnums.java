@@ -37,6 +37,7 @@ public enum ExceptionCodeEnums {
     WX_HTTP_REQUEST_ERROR(-200024, "微信接口请求异常"),
     EMAIL_SEND_ERROR(-200025, "邮件发送异常"),
 
+
     ;
 
     private Integer code;

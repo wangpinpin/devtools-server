@@ -3,6 +3,7 @@ package com.wpp.devtools.util;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 
+import java.util.Date;
 import java.util.Properties;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -28,20 +29,20 @@ import org.springframework.stereotype.Component;
 public class EmailUtil {
 
     // 发件人邮箱地址
-    @Value("${Email.from}")
+    @Value("${EMAIL.FROM}")
     private String from;
 
     // HOST地址
-    @Value("${Email.host}")
+    @Value("${EMAIL.HOST}")
     private String host;
 
     // 端口
-    @Value("${Email.port}")
+    @Value("${EMAIL.PORT}")
     private String port;
 
 
     // 发件人邮箱客户端授权码
-    @Value("${Email.password}")
+    @Value("${EMAIL.PASSWORD}")
     private String password;
 
     /**
@@ -89,6 +90,7 @@ public class EmailUtil {
      * @return
      */
     public String sendCodeHtml(String email, String code) {
+        String time = CommonUtils.getTimeStr(new Date(), "yyyy-MM-dd HH:mm:ss");
         String html =
                 "    <table style=\"\n" +
                         "    width: 538px;\n" +
@@ -101,7 +103,8 @@ public class EmailUtil {
                         "    \" align=\"center\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                         "      <tbody>\n" +
                         "        <tr>\n" +
-                        "          <td style=\"height: 65px;color: #fff;font-size: 24px;text-align: center;\">\n" +
+                        "          <td style=\"height: 65px;color: #fff;font-size: 24px;text-align: center;\">\n"
+                        +
                         "            <p style=\"\n" +
                         "            color: #66c0f4;\n" +
                         "            cursor: pointer;\n" +
@@ -109,7 +112,8 @@ public class EmailUtil {
                         "            font-weight: bold;\n" +
                         "            \">小破站</p>\n" +
                         "            <p style=\"\">\n" +
-                        "              <a href=\"https://wangpinpin.com\" target=\"_blank\" style=\"\n" +
+                        "              <a href=\"https://wangpinpin.com\" target=\"_blank\" style=\"\n"
+                        +
                         "              color: #66c0f4;\n" +
                         "              text-decoration: none;\n" +
                         "              font-size: 12px;\n" +
@@ -126,33 +130,42 @@ public class EmailUtil {
                         "          #e3eeff 100%\n" +
                         "          );\n" +
                         "          \">\n" +
-                        "            <table width=\"470\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-left: 5px; padding-right: 5px;\">\n" +
+                        "            <table width=\"470\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-left: 5px; padding-right: 5px;\">\n"
+                        +
                         "              <tbody>\n" +
                         "                <tr bgcolor=\"\">\n" +
                         "                  <td style=\"padding-top: 32px;\">\n" +
-                        "                    <span style=\"font-size: 24px; color: #66c0f4; font-family: Arial, Helvetica, sans-serif; font-weight: bold;\">舔狗每日报道</span>\n" +
+                        "                    <span style=\"font-size: 24px; color: #66c0f4; font-family: Arial, Helvetica, sans-serif; font-weight: bold;\">舔狗每日报道</span>\n"
+                        +
                         "                    <br></td>\n" +
                         "                </tr>\n" +
                         "                <tr>\n" +
-                        "                  <td style=\"font-size: 14px;padding-top: 16px;color: #7b7b7b;text-indent: 2em;line-height: 24px;\">您登录邮箱 " + email + " 所需的 验证码 为： " + code + "</td></tr>\n" +
+                        "                  <td style=\"font-size: 14px;padding-top: 16px;color: #7b7b7b;text-indent: 2em;line-height: 24px;\">您登录邮箱 "
+                        + email
+                        + " 所需的验证码为： <a style=\"text-decoration: none;color: #66c0f4;font-weight: bold;\">"
+                        + code + "</a></td></tr>\n" +
                         "                <tr>\n" +
                         "                  <td>\n" +
-                        "                    <table width=\"458\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 14px;\" bgcolor=\"\">\n" +
+                        "                    <table width=\"458\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 14px;\" bgcolor=\"\">\n"
+                        +
                         "                      <tbody>\n" +
                         "                        <tr>\n" +
                         "                          <td class=\"details\">\n" +
                         "                            <br>\n" +
                         "                            <br>\n" +
-                        "                            <table cellpadding=\"0\" cellspacing=\"0\" align=\"left\" border=\"0\" width=\"100%\" style=\"\n" +
+                        "                            <table cellpadding=\"0\" cellspacing=\"0\" align=\"left\" border=\"0\" width=\"100%\" style=\"\n"
+                        +
                         "                            text-align: right;\n" +
                         "                            \">\n" +
                         "                              <tbody style=\"\n" +
                         "                              line-height: 23px;\n" +
                         "                              \">\n" +
                         "                                <tr>\n" +
-                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">2020-09-16 00:00:00</td></tr>\n" +
+                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">"
+                        + time + "</td></tr>\n" +
                         "                                <tr>\n" +
-                        "                                  <td style=\"height: 12px; line-height: 12px;\">&nbsp;</td></tr>\n" +
+                        "                                  <td style=\"height: 12px; line-height: 12px;\">&nbsp;</td></tr>\n"
+                        +
                         "                              </tbody>\n" +
                         "                            </table>\n" +
                         "                          </td>\n" +
@@ -162,7 +175,8 @@ public class EmailUtil {
                         "                  </td>\n" +
                         "                </tr>\n" +
                         "                <tr>\n" +
-                        "                  <td style=\"font-size: 12px;color: #c2c2c2;padding-top: 16px;padding-bottom: 60px;\">\n" +
+                        "                  <td style=\"font-size: 12px;color: #c2c2c2;padding-top: 16px;padding-bottom: 60px;\">\n"
+                        +
                         "                    <br>\n" +
                         "                    <br>该验证码有效期为5分钟\n" +
                         "                    <br>\n" +
@@ -178,7 +192,7 @@ public class EmailUtil {
         return html;
     }
 
-    public String sendCodeHtml(String content, String time, String dayCount) {
+    public String sendDiaryHtml(String content, String from, String time, String dayCount) {
         String html =
                 "    <table style=\"\n" +
                         "    width: 538px;\n" +
@@ -191,7 +205,8 @@ public class EmailUtil {
                         "    \" align=\"center\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                         "      <tbody>\n" +
                         "        <tr>\n" +
-                        "          <td style=\"height: 65px;color: #fff;font-size: 24px;text-align: center;\">\n" +
+                        "          <td style=\"height: 65px;color: #fff;font-size: 24px;text-align: center;\">\n"
+                        +
                         "            <p style=\"\n" +
                         "            color: #66c0f4;\n" +
                         "            cursor: pointer;\n" +
@@ -199,7 +214,8 @@ public class EmailUtil {
                         "            font-weight: bold;\n" +
                         "            \">小破站</p>\n" +
                         "            <p style=\"\">\n" +
-                        "              <a href=\"https://wangpinpin.com\" target=\"_blank\" style=\"\n" +
+                        "              <a href=\"https://wangpinpin.com\" target=\"_blank\" style=\"\n"
+                        +
                         "              color: #66c0f4;\n" +
                         "              text-decoration: none;\n" +
                         "              font-size: 12px;\n" +
@@ -216,39 +232,53 @@ public class EmailUtil {
                         "          #e3eeff 100%\n" +
                         "          );\n" +
                         "          \">\n" +
-                        "            <table width=\"470\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-left: 5px; padding-right: 5px;\">\n" +
+                        "            <table width=\"470\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding-left: 5px; padding-right: 5px;\">\n"
+                        +
                         "              <tbody>\n" +
                         "                <tr bgcolor=\"\">\n" +
                         "                  <td style=\"padding-top: 32px;\">\n" +
-                        "                    <span style=\"font-size: 24px; color: #66c0f4; font-family: Arial, Helvetica, sans-serif; font-weight: bold;\">舔狗每日报道</span>\n" +
+                        "                    <span style=\"font-size: 24px; color: #66c0f4; font-family: Arial, Helvetica, sans-serif; font-weight: bold;\">舔狗每日报道</span>\n"
+                        +
                         "                    <br /></td>\n" +
                         "                </tr>\n" +
                         "                <tr>\n" +
-                        "                  <td style=\"font-size: 14px;padding-top: 16px;color: #7b7b7b;text-indent: 2em;line-height: 24px;\">" + content + "</td></tr>\n" +
+                        "                  <td style=\"font-size: 14px;padding-top: 16px;color: #7b7b7b;text-indent: 2em;line-height: 24px;\">"
+                        + content + "</td></tr>\n" +
                         "                <tr>\n" +
                         "                  <td>\n" +
-                        "                    <table width=\"458\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 14px;\" bgcolor=\"\">\n" +
+                        "                    <table width=\"458\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding: 14px;\" bgcolor=\"\">\n"
+                        +
                         "                      <tbody>\n" +
                         "                        <tr>\n" +
                         "                          <td class=\"details\">\n" +
                         "                            <br />\n" +
                         "                            <br />\n" +
-                        "                            <table cellpadding=\"0\" cellspacing=\"0\" align=\"left\" border=\"0\" width=\"100%\" style=\"\n" +
+                        "                            <table cellpadding=\"0\" cellspacing=\"0\" align=\"left\" border=\"0\" width=\"100%\" style=\"\n"
+                        +
                         "                            text-align: right;\n" +
                         "                            \">\n" +
                         "                              <tbody style=\"\n" +
                         "                              line-height: 23px;\n" +
                         "                              \">\n" +
                         "                                <tr>\n" +
-                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">" + time + "</td></tr>\n" +
+                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">"
+                        + from + "</td></tr>\n" +
                         "                                <tr>\n" +
-                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">今天也是一只合格的舔狗呢</td></tr>\n" +
                         "                                <tr>\n" +
-                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">舔狗的陪伴\n" +
-                        "                                    <span style=\"font-size: 12px;\">- 天数：" + dayCount + " 天</span></td>\n" +
+                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">"
+                        + time + "</td></tr>\n" +
+                        "                                <tr>\n" +
+                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">今天也是一只合格的舔狗呢</td></tr>\n"
+                        +
+                        "                                <tr>\n" +
+                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">舔狗的陪伴\n"
+                        +
+                        "                                    <span style=\"font-size: 12px;\">- 天数："
+                        + dayCount + " 天</span></td>\n" +
                         "                                </tr>\n" +
                         "                                <tr>\n" +
-                        "                                  <td style=\"height: 12px; line-height: 12px;\">&nbsp;</td></tr>\n" +
+                        "                                  <td style=\"height: 12px; line-height: 12px;\">&nbsp;</td></tr>\n"
+                        +
                         "                              </tbody>\n" +
                         "                            </table>\n" +
                         "                          </td>\n" +
@@ -258,16 +288,20 @@ public class EmailUtil {
                         "                  </td>\n" +
                         "                </tr>\n" +
                         "                <tr>\n" +
-                        "                  <td style=\"font-size: 12px;color: #c2c2c2;padding-top: 16px;padding-bottom: 60px;cursor: pointer;\">\n" +
+                        "                  <td style=\"font-size: 12px;color: #c2c2c2;padding-top: 16px;padding-bottom: 60px;cursor: pointer;\">\n"
+                        +
                         "                    <br />\n" +
                         "                    <br />\n" +
-                        "                    <a href=\"https://wangpinpin.com/MessageBoard\" target=\"_blank\" style=\"text-decoration: none;color: #c2c2c2;\">留言</a>\n" +
+                        "                    <a href=\"https://wangpinpin.com/MessageBoard\" target=\"_blank\" style=\"text-decoration: none;color: #c2c2c2;\">留言</a>\n"
+                        +
                         "                    <br />\n" +
                         "                    <br />\n" +
-                        "                    <a href=\"https://wangpinpin.com/MessageBoard\" target=\"_blank\" style=\"text-decoration: none;color: #c2c2c2;\">帮他人订阅</a>\n" +
+                        "                    <a href=\"https://wangpinpin.com/MessageBoard\" target=\"_blank\" style=\"text-decoration: none;color: #c2c2c2;\">帮他人订阅</a>\n"
+                        +
                         "                    <br />\n" +
                         "                    <br />\n" +
-                        "                    <a href=\"https://wangpinpin.com/MessageBoard\" target=\"_blank\" style=\"text-decoration: none; color: #c2c2c2; \">点击退订</a>\n" +
+                        "                    <a href=\"https://wangpinpin.com/MessageBoard\" target=\"_blank\" style=\"text-decoration: none; color: #c2c2c2; \">点击退订</a>\n"
+                        +
                         "                    <br /></td>\n" +
                         "                </tr>\n" +
                         "              </tbody>\n" +

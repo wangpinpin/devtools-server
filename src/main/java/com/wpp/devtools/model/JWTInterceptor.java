@@ -8,11 +8,12 @@ import com.wpp.devtools.util.JWTUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * @program: volvo-sever
+ * @program: devtools-server
  * @description:
  * @author: wpp
  * @create: 2020-07-06
@@ -20,6 +21,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 @Slf4j
 public class JWTInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
@@ -33,7 +37,7 @@ public class JWTInterceptor implements HandlerInterceptor {
                 throw new CustomException(ExceptionCodeEnums.JWT_VALID_ERROR);
             }
         }
-        final JSONObject jsonObject = JWTUtil.parseJWT(authHeader);
+        final JSONObject jsonObject = jwtUtil.parseJWT(authHeader);
         request.setAttribute(JWTConfig.JWT_USER_ID_KEY, jsonObject.get(JWTConfig.JWT_USER_ID_KEY));
         return true;
 

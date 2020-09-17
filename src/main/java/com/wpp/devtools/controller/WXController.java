@@ -26,8 +26,10 @@ public class WXController {
 
     @Autowired
     private HttpServletRequest request;
+
     @Autowired
     private HttpServletResponse response;
+
     @Autowired
     private WXService wxService;
 
@@ -42,10 +44,5 @@ public class WXController {
         wxService.wxUrlTokenValid(request, response);
     }
 
-    @ApiOperation("创建菜单")
-    @PostMapping("createMenu")
-    public void createMenu() {
-        wxService.createMenu();
-    }
 
 }

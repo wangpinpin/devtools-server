@@ -1,7 +1,7 @@
 package com.wpp.devtools.config;
 
 /**
- * @program: volvo-sever
+ * @program: devtools-server
  * @description:
  * @author: wpp
  * @create: 2020-08-05
