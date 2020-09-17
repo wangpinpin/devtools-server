@@ -109,8 +109,7 @@ public class UnAuthController {
     @ApiOperation("验证邮箱是否存在")
     @PostMapping("emailIsExist")
     public Result emailIsExist(@RequestParam String email) {
-        unAuthService.emailIsExist(email);
-        return ResultVo.success();
+        return ResultVo.success(unAuthService.emailIsExist(email));
     }
 
     @ApiOperation("发送验证码")
