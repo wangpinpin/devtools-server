@@ -408,8 +408,11 @@ public class UnAuthService {
     public Object login(LoginBo l) {
         User user = userRepository.findByEmail(l.getEmail());
 
+        if(null == user) {
+            throw new CustomException(UserCodeEnums.USER_PSW_ERROR);
+        }
         if(!emailIsExist(user.getEmail())) {
-            throw new CustomException(UserCodeEnums.EMAIL_NOT_EXIST);
+            throw new CustomException(UserCodeEnums.USER_PSW_ERROR);
         }
         if(!user.getPassword().equals(MD5Util.md5Encrypt32Upper(l.getPassword()))) {
             throw new CustomException(UserCodeEnums.USER_PSW_ERROR);
