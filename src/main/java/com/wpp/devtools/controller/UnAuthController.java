@@ -107,7 +107,7 @@ public class UnAuthController {
     }
 
     @ApiOperation("验证邮箱是否存在")
-    @PostMapping("emailIsExist")
+    @GetMapping("emailIsExist")
     public Result emailIsExist(@RequestParam String email) {
         return ResultVo.success(unAuthService.emailIsExist(email));
     }

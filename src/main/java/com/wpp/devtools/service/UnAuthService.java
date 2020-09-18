@@ -384,6 +384,7 @@ public class UnAuthService {
      *
      * @param r
      */
+    @Transactional
     public void register(RegisterBo r) {
 
         if(emailIsExist(r.getEmail())) {
@@ -424,6 +425,7 @@ public class UnAuthService {
      * @param f
      * @return
      */
+    @Transactional
     public void forgetPassword(ForgetPasswordBo f) {
 
         //验证邮件验证码
@@ -439,14 +441,18 @@ public class UnAuthService {
      * @param email
      * @param code
      */
-    private void validEmailAndCode(String email, String code) {
+    @Transactional
+    public void validEmailAndCode(String email, String code) {
         VerificationCode vc = verificationCodeRepository
-                .findByEmailAndCode(email, code);
+                .findByEmailAndCodeAndUsed(email, code, false);
         if (null == vc) {
             throw new CustomException(UserCodeEnums.VERIFICATION_CODE_ERROR);
         }
         if (vc.getDeadline().before(new Date())) {
             throw new CustomException(UserCodeEnums.VERIFICATION_CODE_INVALID);
         }
+        //验证码被使用
+        vc.setUsed(true);
+        verificationCodeRepository.save(vc);
     }
 }

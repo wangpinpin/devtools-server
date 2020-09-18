@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VerificationCodeRepository extends JpaRepository<VerificationCode, String> {
 
-    VerificationCode findByEmailAndCode(String email, String code);
+    VerificationCode findByEmailAndCodeAndUsed(String email, String code, Boolean used);
 
 }

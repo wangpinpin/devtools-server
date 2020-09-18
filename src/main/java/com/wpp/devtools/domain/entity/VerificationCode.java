@@ -31,6 +31,7 @@ public class VerificationCode {
   private String email;
   private String code;
   private java.sql.Timestamp deadline;
+  private boolean used;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;
 
