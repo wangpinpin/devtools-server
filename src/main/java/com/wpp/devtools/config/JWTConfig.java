@@ -24,7 +24,7 @@ public class JWTConfig {
 
     public final static long JWT_EXPIRESSECOND = 9999999999L; //永久
 
-    public final static String JWT_BEARER = "Bearer ";
+    public final static String JWT_BEARER = "Bearer";
 
     public final static String JWT_HEADER = "Authorization";
 

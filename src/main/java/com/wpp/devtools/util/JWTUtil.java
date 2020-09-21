@@ -37,7 +37,7 @@ public class JWTUtil {
         if (null == token || !token.startsWith(JWTConfig.JWT_BEARER)) {
             throw new CustomException(ExceptionCodeEnums.JWT_VALID_ERROR);
         }
-        token = token.substring(7);
+        token = token.substring(6);
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(DatatypeConverter.parseBase64Binary(jwtConfig.getJwtBase64secret()))

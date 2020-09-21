@@ -2,7 +2,6 @@ package com.wpp.devtools.util;
 
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
-
 import java.util.Date;
 import java.util.Properties;
 import javax.mail.BodyPart;
@@ -15,7 +14,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
  * @create: 2020-07-07
  **/
 @Component
+@Slf4j
 public class EmailUtil {
 
     // 发件人邮箱地址
@@ -78,6 +79,7 @@ public class EmailUtil {
             transport.sendMessage(message, message.getAllRecipients());
             transport.close();
         } catch (MessagingException e) {
+            log.error("邮件发送失败 to: " + to);
             throw new CustomException(ExceptionCodeEnums.EMAIL_SEND_ERROR);
         }
     }
@@ -192,7 +194,15 @@ public class EmailUtil {
         return html;
     }
 
-    public String sendDiaryHtml(String content, String from, String time, String dayCount) {
+    public String sendDiaryHtml(String content, String godNickName, String from, String id) {
+        String time = CommonUtils.getTimeStr(new Date(), "yyyy-MM-dd HH:mm");
+
+        //署名
+        String fromDiv = "";
+        if (StringUtils.isNoneBlank(from)) {
+            fromDiv = "<tr><td style='font-size: 14px; color: #c2c2c2;'>" + from + "</td></tr>";
+        }
+
         String html =
                 "    <table style=\"\n" +
                         "    width: 538px;\n" +
@@ -242,6 +252,9 @@ public class EmailUtil {
                         "                    <br /></td>\n" +
                         "                </tr>\n" +
                         "                <tr>\n" +
+                        "                  <td style=\"font-size: 14px;padding-top: 16px;color: #7b7b7b;text-indent: 2em;line-height: 24px;\">Dear "
+                        + godNickName + "</td></tr>\n" +
+                        "                <tr>\n" +
                         "                  <td style=\"font-size: 14px;padding-top: 16px;color: #7b7b7b;text-indent: 2em;line-height: 24px;\">"
                         + content + "</td></tr>\n" +
                         "                <tr>\n" +
@@ -260,9 +273,7 @@ public class EmailUtil {
                         "                              <tbody style=\"\n" +
                         "                              line-height: 23px;\n" +
                         "                              \">\n" +
-                        "                                <tr>\n" +
-                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">"
-                        + from + "</td></tr>\n" +
+                        fromDiv +
                         "                                <tr>\n" +
                         "                                <tr>\n" +
                         "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">"
@@ -270,12 +281,6 @@ public class EmailUtil {
                         "                                <tr>\n" +
                         "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">今天也是一只合格的舔狗呢</td></tr>\n"
                         +
-                        "                                <tr>\n" +
-                        "                                  <td style=\"font-size: 14px; color: #c2c2c2;\">舔狗的陪伴\n"
-                        +
-                        "                                    <span style=\"font-size: 12px;\">- 天数："
-                        + dayCount + " 天</span></td>\n" +
-                        "                                </tr>\n" +
                         "                                <tr>\n" +
                         "                                  <td style=\"height: 12px; line-height: 12px;\">&nbsp;</td></tr>\n"
                         +
@@ -296,11 +301,12 @@ public class EmailUtil {
                         +
                         "                    <br />\n" +
                         "                    <br />\n" +
-                        "                    <a href=\"https://wangpinpin.com/MessageBoard\" target=\"_blank\" style=\"text-decoration: none;color: #c2c2c2;\">帮他人订阅</a>\n"
+                        "                    <a href=\"https://wangpinpin.com/\" target=\"_blank\" style=\"text-decoration: none;color: #c2c2c2;\">帮他人订阅</a>\n"
                         +
                         "                    <br />\n" +
                         "                    <br />\n" +
-                        "                    <a href=\"https://wangpinpin.com/MessageBoard\" target=\"_blank\" style=\"text-decoration: none; color: #c2c2c2; \">点击退订</a>\n"
+                        "                    <a href=\"https://wangpinpin.com/cancel?id=" + id
+                        + "\" target=\"_blank\" style=\"text-decoration: none; color: #c2c2c2; \">点击退订</a>\n"
                         +
                         "                    <br /></td>\n" +
                         "                </tr>\n" +

@@ -8,6 +8,7 @@ import com.wpp.devtools.domain.enums.TypeEnum;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.UnAuthService;
+import com.wpp.devtools.service.UserService;
 import com.wpp.devtools.util.EmailUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +37,8 @@ public class UnAuthController {
     @Autowired
     private UnAuthService unAuthService;
 
+    @Autowired
+    private UserService userService;
 
     @ApiOperation("舔狗日记")
     @GetMapping("getDoglickingDiary")
@@ -138,6 +141,13 @@ public class UnAuthController {
     @PostMapping("forgetPassword")
     public Result forgetPassword(@Valid @RequestBody ForgetPasswordBo f) {
         unAuthService.forgetPassword(f);
+        return ResultVo.success();
+    }
+
+    @ApiOperation("取消订阅")
+    @PostMapping("cancelSubscribe")
+    public Result sendSubscribe(@RequestParam String id, @RequestParam Boolean cancel) {
+        userService.cancelSubscribe(id, cancel);
         return ResultVo.success();
     }
 

@@ -132,4 +132,8 @@ public class CommonUtils {
         return sb.toString();
     }
 
+    public static int getThisTimeHour() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(calendar.HOUR_OF_DAY);
+    }
 }

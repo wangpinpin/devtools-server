@@ -15,21 +15,19 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @Entity
-@Table(name = "activity")
+@Table(name = "subscribe_record")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
 @DynamicInsert
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-public class Activity {
+public class SubscribeRecord {
 
   @Id
   @GeneratedValue(generator = "jpa-uuid")
   private String id;
-  private String name;
-  private long sort;
-  private boolean enabled;
+  private String subscribeId;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;
 

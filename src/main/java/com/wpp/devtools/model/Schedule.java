@@ -1,6 +1,6 @@
 package com.wpp.devtools.model;
 
-import com.wpp.devtools.service.UnAuthService;
+import com.wpp.devtools.service.UserService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 /**
- * @program: volvo-server
+ * @program: devtools-server
  * @description: 定时任务
  * @author: wpp
  * @create: 2020-07-09
@@ -29,15 +29,16 @@ public class Schedule implements SchedulingConfigurer {
     }
 
     @Autowired
-    private UnAuthService unAuthService;
+    private UserService userService;
 
-    //每天凌晨1点
-    @Scheduled(cron = "0 0 1 * * ?")
+    //每小时执行一次
+    //发送订阅任务
+    @Scheduled(cron = "0 0 * * * ?")
     public void task1() {
         long startTime = System.currentTimeMillis();
-        //            unAuthService.getDoglickingDiaryListInsert();
-//        log.info("定时任务: {}, 完成, 耗时： {}s", "同步舔狗日记",
-//                (System.currentTimeMillis() - startTime) / 1000);
+        int count = userService.sendSubscribe();
+        log.info("定时任务: {}, 完成, 耗时： {}s, 发送量: {}", "发送订阅",
+                (System.currentTimeMillis() - startTime) / 1000, count);
     }
 
 }
