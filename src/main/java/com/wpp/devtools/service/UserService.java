@@ -12,6 +12,7 @@ import com.wpp.devtools.repository.SubscribeRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.EmailUtil;
 import com.wpp.devtools.util.JpaUpdateUtil;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,7 @@ public class UserService {
         }
         Subscribe newSubscribe = JSON.parseObject(JSON.toJSONString(a), Subscribe.class);
         JpaUpdateUtil.copyNullProperties(subscribe, newSubscribe);
+        newSubscribe.setActivityName(String.join(",", a.getActivityName()));
         newSubscribe.setUserId(userId);
         subscribeRepository.save(newSubscribe);
     }

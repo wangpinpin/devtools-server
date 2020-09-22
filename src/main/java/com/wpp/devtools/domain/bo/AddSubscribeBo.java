@@ -36,7 +36,7 @@ public class AddSubscribeBo {
 
     @ApiModelProperty("活动名称")
     @NotBlank(message = "活动名称不能为空")
-    private String activityName;
+    private List<String> activityName;
 
     @ApiModelProperty("是否启用")
     private boolean enabled;
