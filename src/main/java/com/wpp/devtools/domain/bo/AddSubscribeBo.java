@@ -35,7 +35,7 @@ public class AddSubscribeBo {
     private Integer hour;
 
     @ApiModelProperty("活动名称")
-    @NotBlank(message = "活动名称不能为空")
+    @NotEmpty(message = "活动名称不能为空")
     private List<String> activityName;
 
     @ApiModelProperty("是否启用")
