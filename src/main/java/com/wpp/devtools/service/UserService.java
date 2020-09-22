@@ -58,11 +58,18 @@ public class UserService {
     public void addSubscribe(AddSubscribeBo a,
             String userId) {
 
-        //判断是否取消订阅
         Subscribe s = subscribeRepository.findCancelByEmail(a.getEmail());
         if (null != s) {
-            throw new CustomException(ExceptionCodeEnums.GOD_EMAIL_EXISTS);
+            //判断是否已经存在
+            if(StringUtils.isBlank(a.getId())) {
+                throw new CustomException(ExceptionCodeEnums.GOD_EMAIL_EXISTS);
+            }
+            //判断是否被取消订阅
+            if(s.isCancel()) {
+                throw new CustomException(ExceptionCodeEnums.GOD_EMAIL_CANCEL);
+            }
         }
+
         Subscribe subscribe = new Subscribe();
         if (StringUtils.isNoneBlank(a.getId())) {
             subscribe = subscribeRepository.findById(a.getId()).orElse(new Subscribe());
@@ -82,7 +89,11 @@ public class UserService {
      */
     public Object findSubscribe(String userId) {
         List<Map<String, Object>> list = subscribeRepository.findList(userId);
-        return CommonUtils.toCamelCase(list);
+        list = CommonUtils.toCamelCase(list);
+        list.forEach(e -> {
+            e.put("activityName", e.get("activityName").toString().split(","));
+        });
+        return list;
     }
 
     /**
