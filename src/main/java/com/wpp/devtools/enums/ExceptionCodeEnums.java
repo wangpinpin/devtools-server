@@ -37,6 +37,7 @@ public enum ExceptionCodeEnums {
     WX_HTTP_REQUEST_ERROR(-200024, "微信接口请求异常"),
     EMAIL_SEND_ERROR(-200025, "邮件发送异常"),
     GOD_EMAIL_EXISTS(-200026, "邮箱已存在, 请勿重复添加"),
+    GOD_EMAIL_CANCEL(-200027, "邮箱已被取消订阅, 无法添加"),
 
 
     ;
