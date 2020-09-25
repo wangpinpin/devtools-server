@@ -19,7 +19,6 @@ public class AddSubscribeBo {
     private String id;
 
     @ApiModelProperty("昵称")
-    @NotBlank(message = "昵称不能为空")
     private String nickName;
 
     @ApiModelProperty("女神昵称")
