@@ -56,8 +56,8 @@ public class UnAuthController {
 
     @ApiOperation("图片转文字")
     @PostMapping("imgToText")
-    public Result imgToText(MultipartFile file, String languageType) {
-        return ResultVo.success(unAuthService.imgToText(file, languageType));
+    public Result imgToText(@RequestParam MultipartFile file) {
+        return ResultVo.success(unAuthService.imgToText(file));
     }
 
     @ApiOperation("同步舔狗日记")

@@ -30,6 +30,7 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, String> {
     @Query(value = "SELECT a.*, COUNT(b.id) `count` FROM `subscribe` a "
             + "LEFT JOIN `subscribe_record` b ON b.`subscribe_id` = a.`id` "
             + "WHERE a.user_id = ?1 "
-            + "GROUP BY a.id ", nativeQuery = true)
+            + "GROUP BY a.id "
+            + "ORDER BY a.create_time ASC ", nativeQuery = true)
     List<Map<String, Object>> findList(String userId);
 }
