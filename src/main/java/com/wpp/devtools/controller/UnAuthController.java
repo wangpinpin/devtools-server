@@ -165,8 +165,8 @@ public class UnAuthController {
 
     @ApiOperation("查询实况天气")
     @GetMapping("findWeatherNow")
-    public Result findWeatherNow(@RequestParam String lon, @RequestParam String lat) {
-        return ResultVo.success(unAuthService.findWeatherNow(lon, lat));
+    public Result findWeatherNow(@RequestParam String weatherId) {
+        return ResultVo.success(unAuthService.findWeatherNow(weatherId));
     }
 
 }

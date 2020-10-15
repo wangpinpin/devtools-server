@@ -498,15 +498,14 @@ public class UnAuthService {
     /**
      * 查询实况天气
      *
-     * @param lon
-     * @param lat
+     * @param weatherId
      * @return
      */
-    public Object findWeatherNow(String lon, String lat) {
+    public Object findWeatherNow(String weatherId) {
         String result = HttpUtil
-                .get(MessageFormat.format(UrlConfig.HEFENG_WEATHER_NOW_URL, lon, lat, hefengKey),
+                .get(MessageFormat.format(UrlConfig.HEFENG_WEATHER_NOW_URL, weatherId, hefengKey),
                         null, null);
-        return null;
+        return JSONObject.parseObject(result);
     }
 
 }
