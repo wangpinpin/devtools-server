@@ -43,7 +43,7 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .excludePathPatterns("/favicon.ico")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**",
                         "/swagger-ui.html/**")
-                .excludePathPatterns(Arrays.asList("/unAuth/**", "/wx/**", "/devTools/**"));
+                .excludePathPatterns(Arrays.asList("/unAuth/**", "/devTools/**"));
 
 
     }

@@ -1,6 +1,7 @@
 package com.wpp.devtools.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.wpp.devtools.config.BaiduConfig;
 import com.wpp.devtools.config.CommonConfig;
@@ -9,6 +10,7 @@ import com.wpp.devtools.config.UrlConfig;
 import com.wpp.devtools.domain.bo.ForgetPasswordBo;
 import com.wpp.devtools.domain.bo.LoginBo;
 import com.wpp.devtools.domain.bo.RegisterBo;
+import com.wpp.devtools.domain.entity.City;
 import com.wpp.devtools.domain.entity.DogText;
 import com.wpp.devtools.domain.entity.TextBoard;
 import com.wpp.devtools.domain.entity.TextBoardPraise;
@@ -19,8 +21,10 @@ import com.wpp.devtools.domain.vo.UserVo;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.enums.UserCodeEnums;
 import com.wpp.devtools.exception.CustomException;
+import com.wpp.devtools.repository.CityRepository;
 import com.wpp.devtools.repository.DogTextRepository;
 import com.wpp.devtools.repository.EveryDayTextRepository;
+import com.wpp.devtools.repository.ProvincialRepository;
 import com.wpp.devtools.repository.TextBoardPraiseRepository;
 import com.wpp.devtools.repository.TextBoardRepository;
 import com.wpp.devtools.repository.TypeRepository;
@@ -32,14 +36,17 @@ import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.JWTUtil;
 import com.wpp.devtools.util.MD5Util;
 import com.wpp.devtools.util.RedistUtil;
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -84,6 +91,15 @@ public class UnAuthService {
     @Autowired
     private JWTUtil jwtUtil;
 
+    @Autowired
+    private CityRepository cityRepository;
+
+    @Autowired
+    private ProvincialRepository provincialRepository;
+
+
+    @Value("${HEFENG.KEY}")
+    private String hefengKey;
 
     /**
      * 舔狗日记
@@ -325,11 +341,12 @@ public class UnAuthService {
 
     /**
      * 验证邮箱是否存在
+     *
      * @param email
      */
     public boolean emailIsExist(String email) {
         User u = userRepository.findByEmail(email);
-        if(null != u) {
+        if (null != u) {
             return true;
         }
         return false;
@@ -384,7 +401,7 @@ public class UnAuthService {
     @Transactional
     public void register(RegisterBo r) {
 
-        if(emailIsExist(r.getEmail())) {
+        if (emailIsExist(r.getEmail())) {
             throw new CustomException(UserCodeEnums.EMAIL_EXIST);
         }
 
@@ -399,19 +416,20 @@ public class UnAuthService {
 
     /**
      * 登录
+     *
      * @param l
      * @return
      */
     public Object login(LoginBo l) {
         User user = userRepository.findByEmail(l.getEmail());
 
-        if(null == user) {
+        if (null == user) {
             throw new CustomException(UserCodeEnums.USER_PSW_ERROR);
         }
-        if(!emailIsExist(user.getEmail())) {
+        if (!emailIsExist(user.getEmail())) {
             throw new CustomException(UserCodeEnums.USER_PSW_ERROR);
         }
-        if(!user.getPassword().equals(MD5Util.md5Encrypt32Upper(l.getPassword()))) {
+        if (!user.getPassword().equals(MD5Util.md5Encrypt32Upper(l.getPassword()))) {
             throw new CustomException(UserCodeEnums.USER_PSW_ERROR);
         }
 
@@ -422,6 +440,7 @@ public class UnAuthService {
 
     /**
      * 忘记密码
+     *
      * @param f
      * @return
      */
@@ -438,6 +457,7 @@ public class UnAuthService {
 
     /**
      * 验证邮件验证码
+     *
      * @param email
      * @param code
      */
@@ -455,4 +475,38 @@ public class UnAuthService {
         vc.setUsed(true);
         verificationCodeRepository.save(vc);
     }
+
+    /**
+     * 查询省列表
+     *
+     * @return
+     */
+    public Object findProvincial() {
+        return provincialRepository.findAll();
+    }
+
+    /**
+     * 查询市列表
+     *
+     * @param id
+     * @return
+     */
+    public Object findCity(int id) {
+        return cityRepository.findByPid(id);
+    }
+
+    /**
+     * 查询实况天气
+     *
+     * @param lon
+     * @param lat
+     * @return
+     */
+    public Object findWeatherNow(String lon, String lat) {
+        String result = HttpUtil
+                .get(MessageFormat.format(UrlConfig.HEFENG_WEATHER_NOW_URL, lon, lat, hefengKey),
+                        null, null);
+        return null;
+    }
+
 }

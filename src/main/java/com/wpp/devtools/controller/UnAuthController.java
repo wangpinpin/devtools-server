@@ -151,4 +151,22 @@ public class UnAuthController {
         return ResultVo.success();
     }
 
+    @ApiOperation("查询省列表")
+    @GetMapping("findProvincial")
+    public Result findProvincial() {
+        return ResultVo.success(unAuthService.findProvincial());
+    }
+
+    @ApiOperation("查询市列表")
+    @GetMapping("findCity")
+    public Result findCity(@RequestParam Integer id) {
+        return ResultVo.success(unAuthService.findCity(id));
+    }
+
+    @ApiOperation("查询实况天气")
+    @GetMapping("findWeatherNow")
+    public Result findWeatherNow(@RequestParam String lon, @RequestParam String lat) {
+        return ResultVo.success(unAuthService.findWeatherNow(lon, lat));
+    }
+
 }
