@@ -42,7 +42,7 @@ public class UnAuthController {
 
     @ApiOperation("舔狗日记")
     @GetMapping("getDoglickingDiary")
-    @AccessLimit(seconds = 10, maxCount = 5)
+    @AccessLimit(seconds = 10, maxCount = 10)
     public Result getDoglickingDiary(@RequestParam String typeId) {
         return ResultVo.success(unAuthService.getDoglickingDiary(typeId));
     }
@@ -132,7 +132,6 @@ public class UnAuthController {
 
     @ApiOperation("登录")
     @PostMapping("login")
-    @AccessLimit(seconds = 60, maxCount = 5)
     public Result login(@Valid @RequestBody LoginBo l) {
         return ResultVo.success(unAuthService.login(l));
     }
