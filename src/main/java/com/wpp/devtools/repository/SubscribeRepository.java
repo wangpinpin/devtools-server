@@ -19,6 +19,7 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, String> {
     @Query(value = "SELECT a.* FROM `subscribe` a "
             + "LEFT JOIN `subscribe_record` b ON b.`subscribe_id` = a.`id` AND TO_DAYS(b.`create_time`) = TO_DAYS(NOW()) "
             + "WHERE a.hour = ?1 "
+            + "AND a.email IS NOT NULL "
             + "AND b.id IS NULL "
             + "AND a.`enabled` = 1 "
             + "AND a.cancel = 0 ", nativeQuery = true)
