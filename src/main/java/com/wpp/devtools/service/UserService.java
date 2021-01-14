@@ -2,18 +2,19 @@ package com.wpp.devtools.service;
 
 import com.alibaba.fastjson.JSON;
 import com.wpp.devtools.domain.bo.AddSubscribeBo;
+import com.wpp.devtools.domain.bo.NotebookBo;
+import com.wpp.devtools.domain.entity.Notebook;
 import com.wpp.devtools.domain.entity.Subscribe;
 import com.wpp.devtools.domain.entity.SubscribeRecord;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.repository.ActivityRepository;
+import com.wpp.devtools.repository.NotebookRepository;
 import com.wpp.devtools.repository.SubscribeRecordRepository;
 import com.wpp.devtools.repository.SubscribeRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.EmailUtil;
 import com.wpp.devtools.util.JpaUpdateUtil;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,9 @@ public class UserService {
 
     @Autowired
     private EmailUtil emailUtil;
+
+    @Autowired
+    private NotebookRepository notebookRepository;
 
     /**
      * 查询活动列表
@@ -153,4 +157,46 @@ public class UserService {
         subscribeRepository.deleteById(id);
     }
 
+    /**
+     * 保存笔记
+     * @param userId
+     * @param n
+     */
+    public void saveNotebook(String userId, NotebookBo n) {
+        Notebook notebook = JSON.parseObject(JSON.toJSONString(n), Notebook.class);
+        notebook.setUserId(userId);
+
+        if(StringUtils.isNoneBlank(n.getId())) {
+            Notebook oldNoteBook = notebookRepository.findById(n.getId()).orElse(new Notebook());
+            JpaUpdateUtil.copyNullProperties(oldNoteBook, notebook);
+        }
+        notebookRepository.save(notebook);
+    }
+
+    /**
+     * 删除笔记
+     * @param id
+     */
+    @Transactional
+    public void delNotebook(String id) {
+        notebookRepository.deleteById(id);
+    }
+
+    /**
+     * 查询笔记列表
+     * @param userId
+     * @return
+     */
+    public Object findNotebookList(String userId) {
+        return notebookRepository.findAllByUserIdOrderByIndexAscIndexTimestampDesc(userId);
+    }
+
+    /**
+     * 修改笔记排序
+     * @param id
+     * @param index
+     */
+    public void updateNotebookIndex(String id, long index) {
+        notebookRepository.updateIndexById(id, index, System.currentTimeMillis());
+    }
 }

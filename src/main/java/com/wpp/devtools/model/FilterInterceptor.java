@@ -1,15 +1,11 @@
 package com.wpp.devtools.model;
 
-import com.alibaba.fastjson.JSON;
 import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.domain.annotation.AccessLimit;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.RedistUtil;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

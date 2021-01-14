@@ -2,6 +2,7 @@ package com.wpp.devtools.controller;
 
 import com.wpp.devtools.config.JWTConfig;
 import com.wpp.devtools.domain.bo.AddSubscribeBo;
+import com.wpp.devtools.domain.bo.NotebookBo;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.UserService;
@@ -9,7 +10,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,6 +69,35 @@ public class UserController {
     @PostMapping("delSubscribe")
     public Result delSubscribe(@RequestParam String id) {
         userService.delSubscribe(id);
+        return ResultVo.success();
+    }
+
+    @ApiOperation("保存笔记")
+    @PostMapping("saveNotebook")
+    public Result saveNotebook(@RequestBody NotebookBo n) {
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        userService.saveNotebook(userId, n);
+        return ResultVo.success();
+    }
+
+    @ApiOperation("删除笔记")
+    @PostMapping("delNotebook")
+    public Result saveNotebook(@RequestParam String id) {
+        userService.delNotebook(id);
+        return ResultVo.success();
+    }
+
+    @ApiOperation("查询笔记列表")
+    @GetMapping("findNotebookList")
+    public Result findNotebookList() {
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        return ResultVo.success(userService.findNotebookList(userId));
+    }
+
+    @ApiOperation("修改笔记排序")
+    @PostMapping("updateNotebookIndex")
+    public Result updateNotebookIndex(@RequestParam String id, @RequestParam long index) {
+        userService.updateNotebookIndex(id, index);
         return ResultVo.success();
     }
 }

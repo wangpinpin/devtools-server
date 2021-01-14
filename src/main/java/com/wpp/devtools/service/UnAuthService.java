@@ -1,7 +1,6 @@
 package com.wpp.devtools.service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.wpp.devtools.config.BaiduConfig;
 import com.wpp.devtools.config.CommonConfig;
@@ -10,7 +9,6 @@ import com.wpp.devtools.config.UrlConfig;
 import com.wpp.devtools.domain.bo.ForgetPasswordBo;
 import com.wpp.devtools.domain.bo.LoginBo;
 import com.wpp.devtools.domain.bo.RegisterBo;
-import com.wpp.devtools.domain.entity.City;
 import com.wpp.devtools.domain.entity.DogText;
 import com.wpp.devtools.domain.entity.TextBoard;
 import com.wpp.devtools.domain.entity.TextBoardPraise;
@@ -36,10 +34,8 @@ import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.JWTUtil;
 import com.wpp.devtools.util.MD5Util;
 import com.wpp.devtools.util.RedistUtil;
-import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -306,7 +302,7 @@ public class UnAuthService {
                 if (null == dogTextContent) {
                     DogText dogText = DogText.builder()
                             .content(e)
-                            .typeId("b1386080-e5b7-11ea-9d4b-00163e1e93a5")
+                            .typeId("0c97d296-e5b1-11ea-9d4b-00163e1e93a5")
                             .build();
                     dogTextRepository.save(dogText);
                     count[0]++;
