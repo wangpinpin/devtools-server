@@ -18,11 +18,21 @@ import org.springframework.stereotype.Repository;
 public interface NotebookRepository extends JpaRepository<Notebook, String> {
 
 
-    List<Notebook> findAllByUserIdOrderByIndexAscIndexTimestampDesc(String userId);
+    List<Notebook> findAllByUserIdOrderBySortAsc(String userId);
 
     @Transactional
     @Modifying
-    @Query(value = "update notebook set index  = ?2, index_timestamp = ?3 where id = ?1 ", nativeQuery = true)
-    void updateIndexById(String id, long index, long indexTimestamp);
+    @Query(value = "update notebook set sort = sort + ?2 where user_id = ?1  and sort >= ?4 and sort < ?3 ", nativeQuery = true)
+    void updateSortAllTopById(String userId, long deviation, long oldIndex, long newIndex);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update notebook set sort = sort + ?2 where user_id = ?1  and sort > ?3 and sort <= ?4 ", nativeQuery = true)
+    void updateSortAllDownById(String userId, long deviation, long oldIndex, long newIndex);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update notebook set sort  = ?3 where id = ?1  and sort = ?2 ", nativeQuery = true)
+    void updateSortById(String id, long oldIndex, long newIndex);
 
 }

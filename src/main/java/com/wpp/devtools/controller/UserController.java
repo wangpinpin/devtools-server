@@ -96,8 +96,9 @@ public class UserController {
 
     @ApiOperation("修改笔记排序")
     @PostMapping("updateNotebookIndex")
-    public Result updateNotebookIndex(@RequestParam String id, @RequestParam long index) {
-        userService.updateNotebookIndex(id, index);
+    public Result updateNotebookIndex(@RequestParam String id, @RequestParam long oldIndex, @RequestParam long newIndex) {
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        userService.updateNotebookIndex(id, userId, oldIndex, newIndex);
         return ResultVo.success();
     }
 }

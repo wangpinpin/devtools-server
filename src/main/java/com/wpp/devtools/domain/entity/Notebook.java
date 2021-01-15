@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -18,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
+@DynamicInsert
 @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
 public class Notebook {
 
@@ -27,8 +29,7 @@ public class Notebook {
     private String userId;
     private String title;
     private String content;
-    private long index;
-    private long indexTimestamp;
+    private Long sort;
     private java.sql.Timestamp createTime;
     private java.sql.Timestamp updateTime;
 

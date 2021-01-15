@@ -162,6 +162,7 @@ public class UserService {
      * @param userId
      * @param n
      */
+    @Transactional
     public void saveNotebook(String userId, NotebookBo n) {
         Notebook notebook = JSON.parseObject(JSON.toJSONString(n), Notebook.class);
         notebook.setUserId(userId);
@@ -188,15 +189,29 @@ public class UserService {
      * @return
      */
     public Object findNotebookList(String userId) {
-        return notebookRepository.findAllByUserIdOrderByIndexAscIndexTimestampDesc(userId);
+        return notebookRepository.findAllByUserIdOrderBySortAsc(userId);
     }
 
     /**
      * 修改笔记排序
      * @param id
-     * @param index
+     * @param oldIndex
+     * @param newIndex
      */
-    public void updateNotebookIndex(String id, long index) {
-        notebookRepository.updateIndexById(id, index, System.currentTimeMillis());
+    @Transactional
+    public void updateNotebookIndex(String id, String userId, long oldIndex, long newIndex) {
+        if(oldIndex == newIndex) {
+            return;
+        }
+
+        long deviation = oldIndex - newIndex > 0 ? 1 : -1;
+        if(deviation > 0) {
+            //向上移动
+            notebookRepository.updateSortAllTopById(userId, deviation, oldIndex, newIndex);
+        }else{
+            //向下移动
+            notebookRepository.updateSortAllDownById(userId, deviation, oldIndex, newIndex);
+        }
+        notebookRepository.updateSortById(id, oldIndex, newIndex);
     }
 }
