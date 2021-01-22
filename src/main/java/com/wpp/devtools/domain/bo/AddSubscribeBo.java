@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * @program: volvo-sever
+ * @program: devtools-server
  * @description:
  * @author: wpp
  * @create: 2020-09-17

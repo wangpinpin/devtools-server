@@ -3,6 +3,7 @@ package com.wpp.devtools.controller;
 import com.wpp.devtools.config.JWTConfig;
 import com.wpp.devtools.domain.bo.AddSubscribeBo;
 import com.wpp.devtools.domain.bo.NotebookBo;
+import com.wpp.devtools.domain.bo.SaveUserInfoBo;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.UserService;
@@ -29,6 +30,14 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @ApiOperation("保存用户信息")
+    @PostMapping("saveUserInfo")
+    public Result saveUserInfo(@RequestBody SaveUserInfoBo u) {
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        userService.saveUserInfo(u, userId);
+        return ResultVo.success();
+    }
 
     @ApiOperation("查询活动列表")
     @GetMapping("findActivityList")

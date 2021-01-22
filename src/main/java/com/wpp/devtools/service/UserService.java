@@ -3,15 +3,18 @@ package com.wpp.devtools.service;
 import com.alibaba.fastjson.JSON;
 import com.wpp.devtools.domain.bo.AddSubscribeBo;
 import com.wpp.devtools.domain.bo.NotebookBo;
+import com.wpp.devtools.domain.bo.SaveUserInfoBo;
 import com.wpp.devtools.domain.entity.Notebook;
 import com.wpp.devtools.domain.entity.Subscribe;
 import com.wpp.devtools.domain.entity.SubscribeRecord;
+import com.wpp.devtools.domain.entity.User;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.repository.ActivityRepository;
 import com.wpp.devtools.repository.NotebookRepository;
 import com.wpp.devtools.repository.SubscribeRecordRepository;
 import com.wpp.devtools.repository.SubscribeRepository;
+import com.wpp.devtools.repository.UserRepository;
 import com.wpp.devtools.util.CommonUtils;
 import com.wpp.devtools.util.EmailUtil;
 import com.wpp.devtools.util.JpaUpdateUtil;
@@ -42,6 +45,22 @@ public class UserService {
 
     @Autowired
     private NotebookRepository notebookRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    /**
+     * 保存用户信息
+     * @param u
+     * @param userId
+     */
+    public void saveUserInfo(SaveUserInfoBo u, String userId) {
+        User user = JSON.parseObject(JSON.toJSONString(u), User.class);
+        User userOld = userRepository.findById(userId).orElse(null);
+        JpaUpdateUtil.copyNullProperties(userOld, user);
+        userRepository.save(user);
+    }
+
 
     /**
      * 查询活动列表
@@ -214,4 +233,5 @@ public class UserService {
         }
         notebookRepository.updateSortById(id, oldIndex, newIndex);
     }
+
 }

@@ -29,7 +29,9 @@ public class User {
   private String id;
   private Integer uid;
   private String nickName;
+  private Integer gender;
   private String email;
+  private String headImg;
   private String password;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;
