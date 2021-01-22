@@ -39,6 +39,13 @@ public class UserController {
         return ResultVo.success();
     }
 
+    @ApiOperation("获取用户信息")
+    @PostMapping("findUserInfo")
+    public Result findUserInfo() {
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        return ResultVo.success(userService.findUserInfo(userId));
+    }
+
     @ApiOperation("查询活动列表")
     @GetMapping("findActivityList")
     public Result findActivityList() {

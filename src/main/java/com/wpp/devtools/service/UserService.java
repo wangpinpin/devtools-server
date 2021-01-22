@@ -63,6 +63,16 @@ public class UserService {
 
 
     /**
+     * 获取用户信息
+     * @param userId
+     * @return
+     */
+    public Object findUserInfo(String userId) {
+        return userRepository.findById(userId).orElse(null);
+
+    }
+
+    /**
      * 查询活动列表
      *
      * @return
@@ -233,5 +243,6 @@ public class UserService {
         }
         notebookRepository.updateSortById(id, oldIndex, newIndex);
     }
+
 
 }

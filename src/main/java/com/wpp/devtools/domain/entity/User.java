@@ -1,6 +1,7 @@
 package com.wpp.devtools.domain.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -32,6 +33,7 @@ public class User {
   private Integer gender;
   private String email;
   private String headImg;
+  @JsonIgnore
   private String password;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;
