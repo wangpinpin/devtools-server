@@ -33,7 +33,6 @@ public class User {
   private Integer gender;
   private String email;
   private String headImg;
-  @JsonIgnore
   private String password;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;
