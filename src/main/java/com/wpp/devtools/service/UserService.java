@@ -233,7 +233,7 @@ public class UserService {
             return;
         }
 
-        long deviation = oldIndex - newIndex > 0 ? 1 : -1;
+        long deviation = oldIndex - newIndex < 0 ? 1 : -1;
         if(deviation > 0) {
             //向上移动
             notebookRepository.updateSortAllTopById(userId, deviation, oldIndex, newIndex);
