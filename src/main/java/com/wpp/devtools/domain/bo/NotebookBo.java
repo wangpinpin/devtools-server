@@ -15,9 +15,5 @@ public class NotebookBo {
   @ApiModelProperty("内容")
   private String content;
 
-  @ApiModelProperty("序号")
-  private Long sort;
-
-
 
 }
