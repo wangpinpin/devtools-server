@@ -19,10 +19,8 @@ import com.wpp.devtools.domain.vo.UserVo;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.enums.UserCodeEnums;
 import com.wpp.devtools.exception.CustomException;
-import com.wpp.devtools.repository.CityRepository;
 import com.wpp.devtools.repository.DogTextRepository;
 import com.wpp.devtools.repository.EveryDayTextRepository;
-import com.wpp.devtools.repository.ProvincialRepository;
 import com.wpp.devtools.repository.TextBoardPraiseRepository;
 import com.wpp.devtools.repository.TextBoardRepository;
 import com.wpp.devtools.repository.TypeRepository;
@@ -87,13 +85,6 @@ public class UnAuthService {
     @Autowired
     private JWTUtil jwtUtil;
 
-    @Autowired
-    private CityRepository cityRepository;
-
-    @Autowired
-    private ProvincialRepository provincialRepository;
-
-
     @Value("${HEFENG.KEY}")
     private String hefengKey;
 
@@ -125,30 +116,27 @@ public class UnAuthService {
     public void getDoglickingDiaryListInsert() throws InterruptedException {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("token", CommonConfig.ALAPI_TOKEN);
+        headers.add("format", "json");
         MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
 
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 5000; i++) {
             try {
                 String result = HttpUtil
-                        .get("https://v1.alapi.cn/api/hitokoto?format=text&type=a", param, headers);
-//                JSONObject js = JSONObject.parseObject(result);
-//                JSONObject textObject = JSONObject.parseObject(js.getString("data"));
+                        .get("https://v2.alapi.cn/api/dog", param, headers);
+                JSONObject js = JSONObject.parseObject(result);
+                String content = JSONObject.parseObject(js.getString("data")).getString("content");
 
-                DogText e = dogTextRepository.findByContent(result);
+                DogText e = dogTextRepository.findByContent(content);
                 if (null == e) {
                     DogText d = DogText.builder()
-                            .content(result)
+                            .content(content)
                             .typeId("0760fbcd-e5b8-11ea-9d4b-00163e1e93a5")
                             .build();
                     dogTextRepository.save(d);
                 }
-//                Thread.sleep(1000);
+                Thread.sleep(1000);
             } catch (Exception e) {
-                if (((TooManyRequests) e).getStatusText().equals("Too Many Requests")) {
-                    Thread.sleep(5000);
-                } else {
-                    break;
-                }
+                Thread.sleep(10000);
             }
         }
     }
@@ -470,25 +458,6 @@ public class UnAuthService {
         //验证码被使用
         vc.setUsed(true);
         verificationCodeRepository.save(vc);
-    }
-
-    /**
-     * 查询省列表
-     *
-     * @return
-     */
-    public Object findProvincial() {
-        return provincialRepository.findAll();
-    }
-
-    /**
-     * 查询市列表
-     *
-     * @param id
-     * @return
-     */
-    public Object findCity(int id) {
-        return cityRepository.findByPid(id);
     }
 
     /**
