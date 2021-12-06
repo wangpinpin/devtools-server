@@ -9,11 +9,7 @@ import com.wpp.devtools.config.UrlConfig;
 import com.wpp.devtools.domain.bo.ForgetPasswordBo;
 import com.wpp.devtools.domain.bo.LoginBo;
 import com.wpp.devtools.domain.bo.RegisterBo;
-import com.wpp.devtools.domain.entity.DogText;
-import com.wpp.devtools.domain.entity.TextBoard;
-import com.wpp.devtools.domain.entity.TextBoardPraise;
-import com.wpp.devtools.domain.entity.User;
-import com.wpp.devtools.domain.entity.VerificationCode;
+import com.wpp.devtools.domain.entity.*;
 import com.wpp.devtools.domain.enums.TypeEnum;
 import com.wpp.devtools.domain.vo.UserVo;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
@@ -46,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpClientErrorException.TooManyRequests;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -91,11 +86,10 @@ public class UnAuthService {
     /**
      * 舔狗日记
      *
-     * @param typeId
      * @return
      */
-    public String getDoglickingDiary(String typeId) {
-        return dogTextRepository.findContentByTypeIdAndRandom(typeId);
+    public String getDoglickingDiary() {
+        return dogTextRepository.findContentByRandom();
 
     }
 
@@ -104,7 +98,7 @@ public class UnAuthService {
      *
      * @return
      */
-    public Object getEveryDayText() {
+    public EveryDayText getEveryDayText() {
         return everyDayTextRepository.findOneTextByRandom();
     }
 
@@ -130,7 +124,6 @@ public class UnAuthService {
                 if (null == e) {
                     DogText d = DogText.builder()
                             .content(content)
-                            .typeId("0760fbcd-e5b8-11ea-9d4b-00163e1e93a5")
                             .build();
                     dogTextRepository.save(d);
                 }
@@ -290,7 +283,6 @@ public class UnAuthService {
                 if (null == dogTextContent) {
                     DogText dogText = DogText.builder()
                             .content(e)
-                            .typeId("0c97d296-e5b1-11ea-9d4b-00163e1e93a5")
                             .build();
                     dogTextRepository.save(dogText);
                     count[0]++;

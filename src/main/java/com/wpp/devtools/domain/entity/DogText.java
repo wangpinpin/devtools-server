@@ -23,7 +23,6 @@ public class DogText {
   @Id
   @GeneratedValue(strategy= GenerationType.IDENTITY)
   private long id;
-  private String typeId;
   private String content;
 
 

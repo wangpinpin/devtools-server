@@ -38,7 +38,7 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
         log.info("IP进入: " + ip);
         //IP黑名单
         if (redistUtil.getStringToHash(RedisKeyConfig.BLACKLIST, ip)) {
-            throw new CustomException(ExceptionCodeEnums.PARAM_NULL);
+            throw new CustomException(ExceptionCodeEnums.HTTP_REQUEST_FREQUENTLY);
         }
 
         //判断请求是否属于方法的请求

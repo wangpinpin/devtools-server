@@ -16,6 +16,6 @@ public interface DogTextRepository extends JpaRepository<DogText, Long> {
 
     DogText findByContent(String content);
 
-    @Query(value = "SELECT content FROM dog_text WHERE type_id = ?1 ORDER BY RAND() LIMIT 1", nativeQuery = true)
-    String findContentByTypeIdAndRandom(String typeId);
+    @Query(value = "SELECT content FROM dog_text ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    String findContentByRandom();
 }

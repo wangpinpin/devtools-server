@@ -41,8 +41,8 @@ public class UnAuthController {
     @ApiOperation("舔狗日记")
     @GetMapping("getDoglickingDiary")
     @AccessLimit(seconds = 10, maxCount = 10)
-    public Result getDoglickingDiary(@RequestParam String typeId) {
-        return ResultVo.success(unAuthService.getDoglickingDiary(typeId));
+    public Result getDoglickingDiary() {
+        return ResultVo.success(unAuthService.getDoglickingDiary());
     }
 
     @ApiOperation("每日一文")

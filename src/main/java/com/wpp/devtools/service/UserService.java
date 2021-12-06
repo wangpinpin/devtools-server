@@ -137,7 +137,7 @@ public class UserService {
         list.forEach(e -> {
             if (e.getActivityName().contains("日记")) {
                 String content = unAuthService
-                        .getDoglickingDiary("0c97d296-e5b1-11ea-9d4b-00163e1e93a5");
+                        .getDoglickingDiary();
                 emailUtil.sendMail(e.getEmail(), "小破站 | 日记",
                         emailUtil.sendDiaryHtml(content, e.getGodNickName(), e.getNickName(), e.getId()));
                 SubscribeRecord s = SubscribeRecord.builder().subscribeId(e.getId()).build();
