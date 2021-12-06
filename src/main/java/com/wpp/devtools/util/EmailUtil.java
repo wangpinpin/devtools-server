@@ -80,7 +80,7 @@ public class EmailUtil {
                 transport.sendMessage(message, message.getAllRecipients());
                 transport.close();
             } catch (MessagingException e) {
-                log.error("邮件发送失败 to: " + to);
+                log.error("邮件发送失败 to: {}", to, e);
                 throw new CustomException(ExceptionCodeEnums.EMAIL_SEND_ERROR);
             }
         }

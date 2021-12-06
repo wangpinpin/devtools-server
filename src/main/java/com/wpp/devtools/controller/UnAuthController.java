@@ -95,12 +95,6 @@ public class UnAuthController {
         return ResultVo.success();
     }
 
-    @ApiOperation("类型查询")
-    @GetMapping("findTypeList")
-    public Result findTypeList(@RequestParam TypeEnum t) {
-        return ResultVo.success(unAuthService.findTypeList(t));
-    }
-
     @ApiOperation("跨域接口")
     @GetMapping("crossDomain")
     public Result crossDomain(@RequestParam String url) {

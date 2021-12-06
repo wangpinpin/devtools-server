@@ -19,7 +19,6 @@ import com.wpp.devtools.repository.DogTextRepository;
 import com.wpp.devtools.repository.EveryDayTextRepository;
 import com.wpp.devtools.repository.TextBoardPraiseRepository;
 import com.wpp.devtools.repository.TextBoardRepository;
-import com.wpp.devtools.repository.TypeRepository;
 import com.wpp.devtools.repository.UserRepository;
 import com.wpp.devtools.repository.VerificationCodeRepository;
 import com.wpp.devtools.util.CommonUtils;
@@ -64,9 +63,6 @@ public class UnAuthService {
 
     @Autowired
     private TextBoardPraiseRepository textBoardPraiseRepository;
-
-    @Autowired
-    private TypeRepository typeRepository;
 
     @Autowired
     private VerificationCodeRepository verificationCodeRepository;
@@ -294,16 +290,6 @@ public class UnAuthService {
 
 
     /**
-     * 类型查询
-     *
-     * @param t
-     * @return
-     */
-    public Object findTypeList(TypeEnum t) {
-        return typeRepository.findByTypeOrderBySort(t);
-    }
-
-    /**
      * 跨域接口
      *
      * @param url
@@ -349,10 +335,10 @@ public class UnAuthService {
             redistUtil.incr("DAY" + email);
         }
 
-        //每分钟一次
+        //每分钟三次
         String minuteCountString = redistUtil.getString("MINUTE" + email);
         int minuteCount = null == minuteCountString ? 0 : Integer.parseInt(minuteCountString);
-        if (minuteCount > 0) {
+        if (minuteCount > 2) {
             throw new CustomException(UserCodeEnums.MINUTE_MAX_SEND_EMAIL_SEND_COUNT);
         } else {
             redistUtil.incr("MINUTE" + email, 58);
