@@ -15,6 +15,6 @@ import org.springframework.stereotype.Repository;
 public interface TextBoardPraiseRepository extends JpaRepository<TextBoardPraise, String> {
 
 
-    @Query(value="SELECT COUNT(*) FROM `text_board_praise` WHERE ip = ?1 AND text_board_id = ?2", nativeQuery = true)
-    int findParaiseRecordCount(String ip, String msgId);
+    @Query(value="SELECT COUNT(*) FROM `text_board_praise` WHERE user_id = ?1 AND text_board_id = ?2", nativeQuery = true)
+    int findParaiseRecordCount(String userId, String msgId);
 }

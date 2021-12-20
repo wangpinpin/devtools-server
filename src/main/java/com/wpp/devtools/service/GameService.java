@@ -3,6 +3,7 @@ package com.wpp.devtools.service;
 import com.wpp.devtools.domain.bo.PlayGameBo;
 import com.wpp.devtools.domain.entity.GameRecord;
 import com.wpp.devtools.repository.GameRecordRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -23,32 +24,34 @@ public class GameService {
     /**
      * 游戏开始接口
      * @param playGameBo
+     * @param userId
      * @return
      */
-    public String playGame(PlayGameBo playGameBo) {
-        String userUUID = UUID.randomUUID().toString();
+    public void playGame(PlayGameBo playGameBo, String userId) {
+        if(StringUtils.isBlank(userId)) {
+            return;
+        }
+
         GameRecord gameRecord = GameRecord.builder()
-                .userUUID(userUUID)
-                .name(playGameBo.getName())
+                .userId(userId)
                 .gameCode(playGameBo.getGameCode())
                 .gameLevel(playGameBo.getGameLevel())
                 .startTime(new Timestamp(new Date().getTime()))
                 .build();
         gameRecordRepository.save(gameRecord);
-        return userUUID;
     }
 
 
     /**
      * 游戏结束接口
-     * @param userUUID
+     * @param userId
      * @return
      */
-    public void gameEnd(String userUUID) {
-        GameRecord gameRecord = gameRecordRepository.findByUserUUID(userUUID);
+    public void gameEnd(String userId) {
+        GameRecord gameRecord = gameRecordRepository.findByUserId(userId);
 
         if(ObjectUtils.isEmpty(gameRecord)) {
-            return ;
+            return;
         }
 
         Timestamp endTimestamp = new Timestamp(new Date().getTime());

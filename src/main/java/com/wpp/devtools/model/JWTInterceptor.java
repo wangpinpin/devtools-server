@@ -22,9 +22,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Slf4j
 public class JWTInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private JWTUtil jwtUtil;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
             Object handler) {
@@ -37,8 +34,6 @@ public class JWTInterceptor implements HandlerInterceptor {
                 throw new CustomException(ExceptionCodeEnums.JWT_VALID_ERROR);
             }
         }
-        final JSONObject jsonObject = jwtUtil.parseJWT(authHeader);
-        request.setAttribute(JWTConfig.JWT_USER_ID_KEY, jsonObject.get(JWTConfig.JWT_USER_ID_KEY));
         return true;
 
     }

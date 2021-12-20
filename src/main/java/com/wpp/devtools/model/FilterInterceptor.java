@@ -1,14 +1,20 @@
 package com.wpp.devtools.model;
 
+import com.alibaba.fastjson.JSONObject;
+import com.wpp.devtools.config.JWTConfig;
 import com.wpp.devtools.config.RedisKeyConfig;
 import com.wpp.devtools.domain.annotation.AccessLimit;
 import com.wpp.devtools.enums.ExceptionCodeEnums;
 import com.wpp.devtools.exception.CustomException;
 import com.wpp.devtools.util.CommonUtils;
+import com.wpp.devtools.util.JWTUtil;
 import com.wpp.devtools.util.RedistUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -25,7 +31,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public class FilterInterceptor extends HandlerInterceptorAdapter {
 
 
-
+    @Autowired
+    private JWTUtil jwtUtil;
 
     @Autowired
     private RedistUtil redistUtil;
@@ -75,6 +82,14 @@ public class FilterInterceptor extends HandlerInterceptorAdapter {
                 throw new CustomException(ExceptionCodeEnums.HTTP_REQUEST_FREQUENTLY);
             }
         }
+
+        final String authHeader = request.getHeader(JWTConfig.JWT_HEADER);
+        if(StringUtils.isNotBlank(authHeader)) {
+            final JSONObject jsonObject = jwtUtil.parseJWT(authHeader);
+            request.setAttribute(JWTConfig.JWT_USER_ID_KEY, jsonObject.get(JWTConfig.JWT_USER_ID_KEY));
+        }
+
+
         return true;
     }
 

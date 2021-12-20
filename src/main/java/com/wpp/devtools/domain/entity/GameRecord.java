@@ -27,8 +27,7 @@ public class GameRecord {
   @Id
   @GeneratedValue(generator = "jpa-uuid")
   private String id;
-  private String userUUID;
-  private String name;
+  private String userId;
   private String gameCode;
   private String gameLevel;
   private java.sql.Timestamp startTime;

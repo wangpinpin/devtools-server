@@ -22,8 +22,4 @@ public class PlayGameBo {
     @ApiModelProperty("游戏等级")
     private String gameLevel;
 
-    @NotBlank(message = "名字不能为空")
-    @ApiModelProperty("名字")
-    private String name;
-
 }

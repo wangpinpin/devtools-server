@@ -42,8 +42,8 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .addPathPatterns("/user/**")
                 .excludePathPatterns("/favicon.ico")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**",
-                        "/swagger-ui.html/**")
-                .excludePathPatterns(Arrays.asList("/unAuth/**", "/devTools/**"));
+                        "/swagger-ui.html/**");
+//                .excludePathPatterns(Arrays.asList("/unAuth/**", "/devTools/**"));
 
 
     }

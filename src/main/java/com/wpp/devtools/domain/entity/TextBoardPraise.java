@@ -26,7 +26,7 @@ public class TextBoardPraise {
   @Id
   @GeneratedValue(generator = "jpa-uuid")
   private String id;
-  private String ip;
+  private String userId;
   private String textBoardId;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;

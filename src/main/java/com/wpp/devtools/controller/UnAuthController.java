@@ -1,5 +1,6 @@
 package com.wpp.devtools.controller;
 
+import com.wpp.devtools.config.JWTConfig;
 import com.wpp.devtools.domain.annotation.AccessLimit;
 import com.wpp.devtools.domain.bo.ForgetPasswordBo;
 import com.wpp.devtools.domain.bo.LoginBo;
@@ -9,11 +10,14 @@ import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.UnAuthService;
 import com.wpp.devtools.service.UserService;
+import com.wpp.devtools.util.CommonUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,20 +82,33 @@ public class UnAuthController {
     @PostMapping("addMsgBoard")
     @AccessLimit(seconds = 5, maxCount = 2)
     public Result addMsgBoard(@RequestParam String msg, String msgId) {
-        unAuthService.addMsgBoard(msg, msgId, request);
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        if(StringUtils.isBlank(userId)) {
+            userId = CommonUtils.getIpAddr(request);
+        }
+        unAuthService.addMsgBoard(msg, msgId, userId);
         return ResultVo.success();
     }
 
     @ApiOperation("查询留言列表")
     @GetMapping("findMsgBoard")
     public Result findMsgBoard(int pageNo, int pageSize) {
-        return ResultVo.success(unAuthService.findMsgBoard(pageNo, pageSize, request));
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        if(StringUtils.isBlank(userId)) {
+            userId = CommonUtils.getIpAddr(request);
+        }
+        return ResultVo.success(unAuthService.findMsgBoard(pageNo, pageSize, userId));
     }
 
     @ApiOperation("留言点赞")
     @PostMapping("msgBoardPraise")
     public Result msgBoardPraise(@RequestParam String msgId) {
-        unAuthService.msgBoardPraise(msgId, request);
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        if(StringUtils.isBlank(userId)) {
+            userId = CommonUtils.getIpAddr(request);
+        }
+
+        unAuthService.msgBoardPraise(msgId, userId);
         return ResultVo.success();
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface GameRecordRepository extends JpaRepository<GameRecord, String> {
 
-    GameRecord findByUserUUID(String userUUID);
+    GameRecord findByUserId(String userId);
 
     @Query(value = "SELECT name, gameLevel, seconds FROM `game_record` WHERE gameCode = ?1 AND seconds IS NOT NULL ORDER seconds ASC limit 1000", nativeQuery = true)
     List<GameRecord> findGameRank(String gameCode);

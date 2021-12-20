@@ -1,5 +1,6 @@
 package com.wpp.devtools.controller;
 
+import com.wpp.devtools.config.JWTConfig;
 import com.wpp.devtools.domain.bo.GameEndBo;
 import com.wpp.devtools.domain.bo.PlayGameBo;
 import com.wpp.devtools.domain.pojo.Result;
@@ -12,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/game/")
 @Api(tags = {"游戏接口服务"})
@@ -20,16 +23,23 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private HttpServletRequest request;
+
+
     @ApiOperation("游戏开始接口")
     @PostMapping("playGame")
     public Result playGame(@Validated @RequestBody PlayGameBo playGameBo) {
-        return ResultVo.success(gameService.playGame(playGameBo));
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        gameService.playGame(playGameBo, userId);
+        return ResultVo.success();
     }
 
     @ApiOperation("游戏结束接口")
-    @PostMapping("gameEnd/{userUUID}")
-    public Result gameEnd(@PathVariable String userUUID) {
-        gameService.gameEnd(userUUID);
+    @PostMapping("gameEnd")
+    public Result gameEnd() {
+        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        gameService.gameEnd(userId);
         return ResultVo.success();
     }
 

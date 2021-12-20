@@ -26,7 +26,7 @@ public class TextBoard {
   @Id
   @GeneratedValue(generator = "jpa-uuid")
   private String id;
-  private String ip;
+  private String userId;
   private String content;
   private String parentId;
   private Integer praiseCount;

@@ -189,15 +189,17 @@ public class UnAuthService {
      * 添加留言
      *
      * @param msg
+     * @param msgId
+     * @param userId
      * @return
      */
     @Transactional
-    public void addMsgBoard(String msg, String msgId, HttpServletRequest request) {
+    public void addMsgBoard(String msg, String msgId, String userId) {
         if (StringUtils.isEmpty(msgId)) {
             msgId = "0";
         }
         TextBoard textBoard = TextBoard.builder()
-                .ip(CommonUtils.getIpAddr(request))
+                .userId(userId)
                 .parentId(msgId)
                 .content(msg).build();
         textBoardRepository.save(textBoard);
@@ -208,19 +210,19 @@ public class UnAuthService {
      *
      * @param pageNo
      * @param pageSize
+     * @param userId
      * @return
      */
-    public Object findMsgBoard(int pageNo, int pageSize, HttpServletRequest request) {
-        String ip = CommonUtils.getIpAddr(request);
+    public Object findMsgBoard(int pageNo, int pageSize, String userId) {
 
         //查询留言
         List<Map<String, Object>> list = textBoardRepository
-                .findAllByPage(pageNo * pageSize, pageSize, ip);
+                .findAllByPage(pageNo * pageSize, pageSize, userId);
         list = CommonUtils.toCamelCase(list);
         List<String> ids = list.stream().map(e -> e.get("id").toString())
                 .collect(Collectors.toList());
         //查询所有回复
-        List<Map<String, Object>> replyList = textBoardRepository.findAllByParentIds(ids, ip);
+        List<Map<String, Object>> replyList = textBoardRepository.findAllByParentIds(ids, userId);
 
         //分组
         Map<String, List<Map<String, Object>>> map = replyList.stream()
@@ -241,21 +243,20 @@ public class UnAuthService {
      * 留言点赞
      *
      * @param msgId
-     * @param request
+     * @param userId
      */
     @Transactional
-    public void msgBoardPraise(String msgId, HttpServletRequest request) {
-        String ip = CommonUtils.getIpAddr(request);
+    public void msgBoardPraise(String msgId, String userId) {
 
         //查询是否已经点赞
-        int count = textBoardPraiseRepository.findParaiseRecordCount(ip, msgId);
+        int count = textBoardPraiseRepository.findParaiseRecordCount(userId, msgId);
         if (count > 0) {
             throw new CustomException(ExceptionCodeEnums.TEXT_BOARD_PRAISE_EXISTS);
         }
         //保存点赞记录
         TextBoardPraise textBoardPraise = TextBoardPraise.builder()
                 .textBoardId(msgId)
-                .ip(ip)
+                .userId(userId)
                 .build();
         textBoardPraiseRepository.save(textBoardPraise);
 
