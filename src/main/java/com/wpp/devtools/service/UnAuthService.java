@@ -27,6 +27,11 @@ import com.wpp.devtools.util.HttpUtil;
 import com.wpp.devtools.util.JWTUtil;
 import com.wpp.devtools.util.MD5Util;
 import com.wpp.devtools.util.RedistUtil;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -34,8 +39,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -89,6 +101,58 @@ public class UnAuthService {
 
     }
 
+    /**
+     * 每日一文添加
+     */
+    public void addEveryDayText() {
+
+        for (int i = 0; i < 10000; i++) {
+            String result;
+            try {
+                URL url = new URL("https://meiriyiwen.com/");
+                System.out.println(url);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1096.1 Safari/536.6");
+                conn.setRequestProperty("content-type","text/html;charset=UTF-8");
+                conn.setDoOutput(true);
+
+
+                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+                StringBuffer sb = new StringBuffer();
+                String s = "";
+                while ((s = rd.readLine()) != null) {
+                    sb.append(s);
+                }
+                if (sb.length() == 0) {
+                    sb.append("[]");
+                }
+                result = sb.toString();
+                System.out.println(result);
+                Document document = Jsoup.parse(result);
+                //Elements head = document.getElementsByTag("head");
+                Element element = document.getElementById("article_show");
+                String title = element.getElementsByTag("h1").html();
+                String author = element.getElementsByTag("span").html().replace("\n", "");
+                String content = element.getElementsByClass("article_text").html();
+
+                EveryDayText everyDayText = everyDayTextRepository.findByTitle(title);
+                if(null == everyDayText) {
+                    EveryDayText e = EveryDayText.builder()
+                            .title(title)
+                            .author(author)
+                            .content(content)
+                            .build();
+                    everyDayTextRepository.save(e);
+                }
+                rd.close();
+                conn.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * 每日一文
      *
@@ -451,5 +515,6 @@ public class UnAuthService {
                         null, null);
         return JSONObject.parseObject(result);
     }
+
 
 }

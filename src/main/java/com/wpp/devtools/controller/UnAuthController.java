@@ -49,6 +49,14 @@ public class UnAuthController {
         return ResultVo.success(unAuthService.getDoglickingDiary());
     }
 
+
+    @ApiOperation("每日一文添加")
+    @GetMapping("addEveryDayText")
+    public Result addEveryDayText() {
+        unAuthService.addEveryDayText();
+        return ResultVo.success();
+    }
+
     @ApiOperation("每日一文")
     @GetMapping("getEveryDayText")
     @AccessLimit(seconds = 10, maxCount = 5)
