@@ -48,8 +48,11 @@ public class GameService {
      * @return
      */
     public void gameEnd(String userId) {
-        GameRecord gameRecord = gameRecordRepository.findByUserId(userId);
+        if(StringUtils.isBlank(userId)) {
+            return;
+        }
 
+        GameRecord gameRecord = gameRecordRepository.findByUserId(userId);
         if(ObjectUtils.isEmpty(gameRecord)) {
             return;
         }
@@ -68,9 +71,9 @@ public class GameService {
      * @param gameCode
      * @return
      */
-    public Map<String, List<GameRecord>> gameRank(String gameCode) {
-        List<GameRecord> rankList = gameRecordRepository.findGameRank(gameCode);
-        Map<String, List<GameRecord>> mapRank= rankList.stream().collect(Collectors.groupingBy(e -> e.getGameLevel()));
+    public Map<String, List<Map<String, Object>>> gameRank(String gameCode) {
+        List<Map<String, Object>> rankList = gameRecordRepository.findGameRank(gameCode);
+        Map<String, List<Map<String, Object>>> mapRank = rankList.stream().collect(Collectors.groupingBy(e -> e.get("gameLevel").toString()));
         return mapRank;
     }
 }

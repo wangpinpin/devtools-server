@@ -1,12 +1,12 @@
 package com.wpp.devtools.repository;
 
-import com.wpp.devtools.domain.entity.Activity;
 import com.wpp.devtools.domain.entity.GameRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: devtools-server
@@ -19,8 +19,11 @@ public interface GameRecordRepository extends JpaRepository<GameRecord, String> 
 
     GameRecord findByUserId(String userId);
 
-    @Query(value = "SELECT name, gameLevel, seconds FROM `game_record` WHERE gameCode = ?1 AND seconds IS NOT NULL ORDER seconds ASC limit 1000", nativeQuery = true)
-    List<GameRecord> findGameRank(String gameCode);
+    @Query(value = "SELECT a.game_level gameLevel, a.seconds, b.nick_name nickName, b.head_img headImg " +
+            "FROM `game_record` a " +
+            "LEFT JOIN user b ON b.id = a.user_id " +
+            "WHERE a.game_code = ?1 AND a.seconds IS NOT NULL ORDER BY a.seconds ASC limit 1000", nativeQuery = true)
+    List<Map<String, Object>> findGameRank(String gameCode);
 
 
 }
