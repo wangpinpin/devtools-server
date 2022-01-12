@@ -6,6 +6,7 @@ import com.wpp.devtools.domain.bo.PlayGameBo;
 import com.wpp.devtools.domain.pojo.Result;
 import com.wpp.devtools.domain.vo.ResultVo;
 import com.wpp.devtools.service.GameService;
+import com.wpp.devtools.util.CommonUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,9 @@ public class GameController {
     @ApiOperation("游戏开始接口")
     @PostMapping("playGame")
     public Result playGame(@Validated @RequestBody PlayGameBo playGameBo) {
-        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        Object userJwt = request.getAttribute(JWTConfig.JWT_USER_ID_KEY);
+        String userId = userJwt == null ? null : userJwt.toString();
+
         gameService.playGame(playGameBo, userId);
         return ResultVo.success();
     }
@@ -38,7 +41,9 @@ public class GameController {
     @ApiOperation("游戏结束接口")
     @PostMapping("gameEnd")
     public Result gameEnd() {
-        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
+        Object userJwt = request.getAttribute(JWTConfig.JWT_USER_ID_KEY);
+        String userId = userJwt == null ? null : userJwt.toString();
+
         gameService.gameEnd(userId);
         return ResultVo.success();
     }

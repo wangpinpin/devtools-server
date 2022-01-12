@@ -13,6 +13,7 @@ import com.wpp.devtools.service.UserService;
 import com.wpp.devtools.util.CommonUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -91,7 +92,7 @@ public class UnAuthController {
     @AccessLimit(seconds = 5, maxCount = 2)
     public Result addMsgBoard(@RequestParam String msg, String msgId) {
         String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
-        if(StringUtils.isBlank(userId)) {
+        if (StringUtils.isBlank(userId)) {
             userId = CommonUtils.getIpAddr(request);
         }
         unAuthService.addMsgBoard(msg, msgId, userId);
@@ -101,20 +102,17 @@ public class UnAuthController {
     @ApiOperation("查询留言列表")
     @GetMapping("findMsgBoard")
     public Result findMsgBoard(int pageNo, int pageSize) {
-        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
-        if(StringUtils.isBlank(userId)) {
-            userId = CommonUtils.getIpAddr(request);
-        }
+        Object userJwt = request.getAttribute(JWTConfig.JWT_USER_ID_KEY);
+        String userId = userJwt == null ? CommonUtils.getIpAddr(request) : userJwt.toString();
+
         return ResultVo.success(unAuthService.findMsgBoard(pageNo, pageSize, userId));
     }
 
     @ApiOperation("留言点赞")
     @PostMapping("msgBoardPraise")
     public Result msgBoardPraise(@RequestParam String msgId) {
-        String userId = request.getAttribute(JWTConfig.JWT_USER_ID_KEY).toString();
-        if(StringUtils.isBlank(userId)) {
-            userId = CommonUtils.getIpAddr(request);
-        }
+        Object userJwt = request.getAttribute(JWTConfig.JWT_USER_ID_KEY);
+        String userId = userJwt == null ? CommonUtils.getIpAddr(request) : userJwt.toString();
 
         unAuthService.msgBoardPraise(msgId, userId);
         return ResultVo.success();
