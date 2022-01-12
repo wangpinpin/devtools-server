@@ -22,7 +22,7 @@ public interface TextBoardRepository extends JpaRepository<TextBoard, String> {
     @Query(value="SELECT a.id, a.content, a.praise_count, a.create_time, CASE WHEN b.id IS NULL THEN FALSE ELSE TRUE END AS praise, c.head_img" +
             "FROM text_board a " +
             "LEFT JOIN text_board_praise b ON b.text_board_id = a.id  AND b.user_id = ?3 " +
-            "LEFT JOIN user c ON c.user_id = a.user_id" +
+            "LEFT JOIN user c ON c.id = a.user_id" +
             "WHERE a.parent_id = 0 " +
             "ORDER BY a.create_time DESC  LIMIT ?1, ?2 ", nativeQuery = true)
     List<Map<String, Object>> findAllByPage(int pageNo, int pageSize, String userId);
@@ -30,7 +30,7 @@ public interface TextBoardRepository extends JpaRepository<TextBoard, String> {
     @Query(value="SELECT a.id, a.content, a.parent_id parentId, a.praise_count praiseCount, a.create_time createTime, CASE WHEN b.id IS NULL THEN FALSE ELSE TRUE END AS praise, c.head_img" +
             "FROM text_board a " +
             "LEFT JOIN text_board_praise b ON b.text_board_id = a.id  AND b.user_id = ?2 " +
-            "LEFT JOIN user c ON c.user_id = a.user_id" +
+            "LEFT JOIN user c ON c.id = a.user_id" +
             "WHERE a.parent_id IN ?1 " +
             "ORDER BY a.create_time DESC", nativeQuery = true)
     List<Map<String, Object>> findAllByParentIds(List<String> parentIds, String userId);
