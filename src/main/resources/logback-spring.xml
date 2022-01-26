@@ -71,6 +71,7 @@
   <root level="${log.level}">
     <appender-ref ref="console"/>
     <appender-ref ref="file"/>
+    <appender-ref ref="error"/>
   </root>
 
 </configuration>

@@ -27,6 +27,9 @@ spring:
     time-zone: GMT+8
 server:
   port: 8001
+log:
+  level: info
+  path: ./logs
 BAIDU:
   APP_ID: XXXX
   API_KEY: XXXX

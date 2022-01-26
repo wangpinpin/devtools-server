@@ -29,7 +29,7 @@ public class TextBoard {
   private String userId;
   private String content;
   private String parentId;
-  private Integer praiseCount;
+  private int praiseCount;
   private java.sql.Timestamp createTime;
   private java.sql.Timestamp updateTime;
 
